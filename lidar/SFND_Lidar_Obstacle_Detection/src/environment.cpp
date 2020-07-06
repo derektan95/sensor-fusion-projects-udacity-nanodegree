@@ -44,7 +44,7 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
     // ----------------------------------------------------
     
     // RENDER OPTIONS
-    bool renderScene = true;
+    bool renderScene = false;
     std::vector<Car> cars = initHighway(renderScene, viewer);
     
     // TODO:: Create lidar sensor - 0 ground plane slope
@@ -55,12 +55,12 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
     // renderRays(viewer, lidar->position, inputCloud);
     renderPointCloud(viewer, inputCloud, "Simple Point Cloud");
 
+    // Use Point Processor object to render segmented point cloud (obstacles from environment)
     ProcessPointClouds<pcl::PointXYZ> pointProcessor;
-    // ProcessPointClouds<pcl::PointXYZ>* pointProcessor = new ProcessPointClouds<pcl::PointXYZ>();
-    // pointProcessor.numPoints(inputCloud);
+    std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentCloud = pointProcessor.SegmentPlane(inputCloud, 100, 0.2);
+    renderPointCloud(viewer,segmentCloud.first,"obstCloud",Color(1,0,0));
+    renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
 
-    
-  
 }
 
 
@@ -95,7 +95,11 @@ int main (int argc, char** argv)
     pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
     CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
+
+    std::cout << "Before Simply Highway function" << std::endl;
     simpleHighway(viewer);
+
+    std::cout << "Before viewer is activated" << std::endl;
 
     while (!viewer->wasStopped ())
     {
