@@ -57,7 +57,9 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
 
     // Use Point Processor object to render segmented point cloud (obstacles from environment)
     ProcessPointClouds<pcl::PointXYZ> pointProcessor;
-    std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentCloud = pointProcessor.SegmentPlane(inputCloud, 100, 0.2);
+
+    // std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentCloud = pointProcessor.SegmentPlane(inputCloud, 100, 0.2);
+    std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentCloud = pointProcessor.SegmentPlaneOwnImplementation(inputCloud, 50, 0.1);
     renderPointCloud(viewer,segmentCloud.first,"obstCloud",Color(1,0,0));
     renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
 

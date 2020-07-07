@@ -17,6 +17,7 @@
 #include <vector>
 #include <ctime>
 #include <chrono>
+#include <unordered_set>
 #include "render/box.h"
 
 template<typename PointT>
@@ -32,9 +33,14 @@ public:
 
     typename pcl::PointCloud<PointT>::Ptr FilterCloud(typename pcl::PointCloud<PointT>::Ptr cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint);
 
+    // USING PCL IMEPLMENTATION
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SeparateClouds(pcl::PointIndices::Ptr inliers, typename pcl::PointCloud<PointT>::Ptr cloud);
-
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SegmentPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold);
+
+    // USING OWN IMEPLMENTATION
+    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SegmentPlaneOwnImplementation(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold);
+    std::unordered_set<int> RansacOwnImplementation3D(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol);
+
 
     std::vector<typename pcl::PointCloud<PointT>::Ptr> Clustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize);
 

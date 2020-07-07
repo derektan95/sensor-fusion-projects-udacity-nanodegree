@@ -1,6 +1,7 @@
 // PCL lib Functions for processing point clouds 
 
 #include "processPointClouds.h"
+#include <unordered_set>
 
 
 //constructor:
@@ -37,6 +38,8 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
 
 }
 
+
+// --- USING PCL RANSAC IMPLEMENTATION --- //
 
 template<typename PointT>
 std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SeparateClouds(pcl::PointIndices::Ptr inliers, typename pcl::PointCloud<PointT>::Ptr cloud) 
@@ -101,6 +104,44 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     std::cout << "plane segmentation took " << elapsedTime.count() << " milliseconds" << std::endl;
 
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> segResult = SeparateClouds(inliers,cloud);
+    return segResult;
+}
+
+
+// --- USING OWN RANSAC IMPLEMENTATION --- //
+
+template<typename PointT>
+std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SegmentPlaneOwnImplementation(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold)
+{
+    // Time segmentation process
+    auto startTime = std::chrono::steady_clock::now();
+
+    //  Fill in this function to find inliers for the cloud - own implementation
+    std::unordered_set<int> inliers = RansacOwnImplementation3D(cloud, 50, 0.5);
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
+
+	for(int index = 0; index < cloud->points.size(); index++)
+	{
+		pcl::PointXYZ point = cloud->points[index];
+		if(inliers.count(index))
+			cloudInliers->points.push_back(point);
+		else
+			cloudOutliers->points.push_back(point);
+	}
+
+    if (cloudInliers->points.size() == 0)
+    {
+        PCL_ERROR ("Could not estimate a planar model for the given dataset.");
+        exit (-1);
+    }
+
+    auto endTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+    std::cout << "plane segmentation took " << elapsedTime.count() << " milliseconds" << std::endl;
+
+    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> segResult(cloudInliers, cloudOutliers);
     return segResult;
 }
 
@@ -179,4 +220,53 @@ std::vector<boost::filesystem::path> ProcessPointClouds<PointT>::streamPcd(std::
 
     return paths;
 
+}
+
+
+template<typename PointT>
+std::unordered_set<int> ProcessPointClouds<PointT>::RansacOwnImplementation3D(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol)
+{
+	std::unordered_set<int> inliersResult;
+	srand(time(NULL));
+	
+	// TODO: Fill in this function
+
+	// For max iterations 
+	for (size_t i = 0; i < maxIterations; i++)
+	{
+		// Randomly sample subset and fit line (Add chosen ints into tempInliersResult)
+		std::unordered_set<int> tempInliersResult;
+		while (tempInliersResult.size() < 3) { tempInliersResult.insert((rand() % cloud->points.size())); }	// avoid choosing duplicate element	
+		
+		auto itr = tempInliersResult.begin();
+		PointT randPoint1 = cloud->points[*itr];
+		itr++;
+		PointT randPoint2 = cloud->points[*itr];
+		itr++;
+		PointT randPoint3 = cloud->points[*itr];
+
+		// Measure distance between every point and fitted line
+		double planeAValue = ((randPoint2.y-randPoint1.y)*(randPoint3.z-randPoint1.z)) - ((randPoint2.z-randPoint1.z)*(randPoint3.y-randPoint1.y));
+		double planeBValue = ((randPoint2.z-randPoint1.z)*(randPoint3.x-randPoint1.x)) - ((randPoint2.x-randPoint1.x)*(randPoint3.z-randPoint1.z));
+		double planeCValue = ((randPoint2.x-randPoint1.x)*(randPoint3.y-randPoint1.y)) - ((randPoint2.y-randPoint1.y)*(randPoint3.x-randPoint1.x));
+		double planeDValue = -((planeAValue*randPoint1.x) + (planeBValue*randPoint1.y) + (planeCValue*randPoint1.z));
+
+		for (size_t i = 0; i < cloud->points.size(); i++)
+		{
+			// Do not carry on this iteration if already in tempInliersResult
+			if (tempInliersResult.count(i) > 0) continue;
+			
+			PointT point = cloud->points[i];
+			double distance = fabs((planeAValue * point.x) + (planeBValue * point.y) + (planeCValue * point.z) + planeDValue) / (sqrt((planeAValue*planeAValue) + (planeBValue*planeBValue) + (planeCValue*planeCValue)));
+
+			// If distance is smaller than threshold count it as inlier
+			// NOTE: Would not insert if same int being inserted
+			if (distance <= distanceTol) tempInliersResult.insert(i);
+		}
+
+		// Return indicies of inliers from fitted line with most inliers
+		if (tempInliersResult.size() > inliersResult.size()) inliersResult = tempInliersResult;
+	}
+
+	return inliersResult;
 }
