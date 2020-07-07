@@ -42,7 +42,7 @@ chrono
 render/box.h
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/box.h
 
-/home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/quiz/ransac/ransac2d.cpp
+/home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/quiz/ransac/ransac.cpp
 ../../render/render.h
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.h
 unordered_set

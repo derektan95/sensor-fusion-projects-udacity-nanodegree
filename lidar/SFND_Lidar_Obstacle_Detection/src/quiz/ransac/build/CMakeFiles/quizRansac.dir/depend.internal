@@ -408,10 +408,10 @@ CMakeFiles/quizRansac.dir/home/derektan/Desktop/sensor_fusion_udacity/tutorials/
  /usr/include/vtk-6.3/vtkVolumeCollection.h
  /usr/include/vtk-6.3/vtkWeakPointerBase.h
  /usr/include/vtk-6.3/vtkWin32Header.h
-CMakeFiles/quizRansac.dir/ransac2d.cpp.o
+CMakeFiles/quizRansac.dir/ransac.cpp.o
  /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/processPointClouds.cpp
  /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/processPointClouds.h
- /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/quiz/ransac/ransac2d.cpp
+ /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/quiz/ransac/ransac.cpp
  /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/box.h
  /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.h
  /usr/include/eigen3/Eigen/Cholesky

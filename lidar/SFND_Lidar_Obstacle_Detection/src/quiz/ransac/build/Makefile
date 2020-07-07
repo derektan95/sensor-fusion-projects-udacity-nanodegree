@@ -150,32 +150,32 @@ home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_
 	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.cpp.s
 .PHONY : home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.cpp.s
 
-ransac2d.o: ransac2d.cpp.o
+ransac.o: ransac.cpp.o
 
-.PHONY : ransac2d.o
+.PHONY : ransac.o
 
 # target to build an object file
-ransac2d.cpp.o:
-	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/ransac2d.cpp.o
-.PHONY : ransac2d.cpp.o
+ransac.cpp.o:
+	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/ransac.cpp.o
+.PHONY : ransac.cpp.o
 
-ransac2d.i: ransac2d.cpp.i
+ransac.i: ransac.cpp.i
 
-.PHONY : ransac2d.i
+.PHONY : ransac.i
 
 # target to preprocess a source file
-ransac2d.cpp.i:
-	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/ransac2d.cpp.i
-.PHONY : ransac2d.cpp.i
+ransac.cpp.i:
+	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/ransac.cpp.i
+.PHONY : ransac.cpp.i
 
-ransac2d.s: ransac2d.cpp.s
+ransac.s: ransac.cpp.s
 
-.PHONY : ransac2d.s
+.PHONY : ransac.s
 
 # target to generate assembly for a file
-ransac2d.cpp.s:
-	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/ransac2d.cpp.s
-.PHONY : ransac2d.cpp.s
+ransac.cpp.s:
+	$(MAKE) -f CMakeFiles/quizRansac.dir/build.make CMakeFiles/quizRansac.dir/ransac.cpp.s
+.PHONY : ransac.cpp.s
 
 # Help Target
 help:
@@ -189,9 +189,9 @@ help:
 	@echo "... home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.o"
 	@echo "... home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.i"
 	@echo "... home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.s"
-	@echo "... ransac2d.o"
-	@echo "... ransac2d.i"
-	@echo "... ransac2d.s"
+	@echo "... ransac.o"
+	@echo "... ransac.i"
+	@echo "... ransac.s"
 .PHONY : help
 
 
