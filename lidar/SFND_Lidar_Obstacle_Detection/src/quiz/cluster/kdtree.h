@@ -61,47 +61,46 @@ struct KdTree
 		InsertHelper(root, point, id, 0);
 	}
 
+	// NOTE: LOOK AT INSTRUCTOR'S ANSWER, CAN BE SIMPLIFIED (A little)!
 	// return a list of point ids in the tree that are within distance of target
 	std::vector<int> SearchHelper(Node *&node, std::vector<float> target, float distanceTol, int depth, std::vector<int> &ids)
 	{
 		int coordIdx = depth % 2; // for 2D
 
-		// Base 1
-		if (node == NULL)
+		// Base 1 - if node is null
+		if (node != NULL)
 		{
-			return ids;
-		}
-
-		// Base 2 - node within bounding box
-		else if (node->point[0] <= (target[0] + distanceTol) && node->point[0] >= (target[0] - distanceTol) &&
-				 node->point[1] <= (target[1] + distanceTol) && node->point[1] >= (target[1] - distanceTol))
-		{
-			float distToTarget = CalcDistToTarget(node->point, target);
-
-			// Add node's ID only if node's distance is within distance tolerance
-			if (distToTarget <= distanceTol)
+			// Base 2 - node within bounding box
+			if (node->point[0] <= (target[0] + distanceTol) && node->point[0] >= (target[0] - distanceTol) &&
+				node->point[1] <= (target[1] + distanceTol) && node->point[1] >= (target[1] - distanceTol))
 			{
-				ids.push_back(node->id);
+				float distToTarget = CalcDistToTarget(node->point, target);
+
+				// Add node's ID only if node's distance is within distance tolerance
+				if (distToTarget <= distanceTol)
+				{
+					ids.push_back(node->id);
+				}
 			}
-		}
 
-		// Recursive 1 - if node's cutting axis is intersecting bounding box
-		if (node->point[coordIdx] <= (target[coordIdx] + distanceTol) && node->point[coordIdx] >= (target[coordIdx] - distanceTol))
-		{
-			SearchHelper(node->left, target, distanceTol, depth + 1, ids);
-			SearchHelper(node->right, target, distanceTol, depth + 1, ids);
-		}
+			// Recursive 1 - if node's cutting axis is intersecting bounding box
+			if (node->point[coordIdx] <= (target[coordIdx] + distanceTol) && node->point[coordIdx] >= (target[coordIdx] - distanceTol))
+			{
+				SearchHelper(node->left, target, distanceTol, depth + 1, ids);
+				SearchHelper(node->right, target, distanceTol, depth + 1, ids);
+			}
 
-		// Recursive 2a - if node's cutting axis is NOT intersecting bounding box - min bound
-		else if (node->point[coordIdx] < (target[coordIdx] - distanceTol))
-		{
-			SearchHelper(node->right, target, distanceTol, depth + 1, ids);
-		}
+			// Recursive 2a - if node's cutting axis is NOT intersecting bounding box - min bound
+			else if (node->point[coordIdx] < (target[coordIdx] - distanceTol))
+			{
+				SearchHelper(node->right, target, distanceTol, depth + 1, ids);
+			}
 
-		// Recursive 2b - if node's cutting axis is NOT intersecting bounding box - max bound
-		else
-		{
-			SearchHelper(node->left, target, distanceTol, depth + 1, ids);
+			// Recursive 2b - if node's cutting axis is NOT intersecting bounding box - max bound
+			else
+			{
+				SearchHelper(node->left, target, distanceTol, depth + 1, ids);
+			}
 		}
 
 		return ids;
