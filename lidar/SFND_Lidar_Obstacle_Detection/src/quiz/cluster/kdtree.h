@@ -26,7 +26,8 @@ struct KdTree
 	{
 	}
 
-	// Also ok if we pass by pointer instead of passing by reference
+	// Finds an appropriate spot in the kd-tree to insert node.
+	// Also ok if we pass by pointer instead of passing by reference.
 	void InsertHelper(Node *&node, std::vector<float> point, int id, int depth)
 	{
 
@@ -62,7 +63,7 @@ struct KdTree
 	}
 
 	// NOTE: LOOK AT INSTRUCTOR'S ANSWER, CAN BE SIMPLIFIED (A little)!
-	// return a list of point ids in the tree that are within distance of target
+	// Return a list of point ids in the tree that are within distance of target.
 	std::vector<int> SearchHelper(Node *&node, std::vector<float> target, float distanceTol, int depth, std::vector<int> &ids)
 	{
 		int coordIdx = depth % 2; // for 2D
@@ -114,6 +115,7 @@ struct KdTree
 		return ids;
 	}
 
+	// Returns Euclidean distance between node and target node.
 	float CalcDistToTarget(std::vector<float> node, std::vector<float> target)
 	{
 		float sumSquared = 0;

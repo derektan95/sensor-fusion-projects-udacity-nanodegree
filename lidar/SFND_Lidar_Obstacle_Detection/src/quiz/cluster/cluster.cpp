@@ -69,12 +69,42 @@ void render2DTree(Node *node, pcl::visualization::PCLVisualizer::Ptr &viewer, Bo
 	}
 }
 
+// Recursive method called by euclideanCluster function.
+// Initializes cluster vector passed in. Also updates isProcessedVector to keep track of processed points.
+void UpdateCluster(const std::vector<std::vector<float>> &points, KdTree *tree, float distanceTol, int pointIdx, std::vector<int> &cluster, std::vector<bool> &isProcessedVector)
+{
+	if (!isProcessedVector[pointIdx])
+	{
+		isProcessedVector[pointIdx] = true;
+		cluster.push_back(pointIdx);
+		std::vector<int> potentialPointClusterIdx = tree->search(points[pointIdx], distanceTol);
+
+		for (int idx : potentialPointClusterIdx)
+		{
+			UpdateCluster(points, tree, distanceTol, idx, cluster, isProcessedVector);
+		}
+	}
+}
+
+// Returns vector of cluster of points that are grouped together using euclideanCluster method.
+// Makes sure that every point's neighbours are considered when clustering.
 std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<float>> &points, KdTree *tree, float distanceTol)
 {
 
 	// TODO: Fill out this function to return list of indices for each cluster
 
 	std::vector<std::vector<int>> clusters;
+	std::vector<bool> isProcessedVector(points.size(), false);
+
+	for (size_t i = 0; i < points.size(); i++)
+	{
+		if (!isProcessedVector[i])
+		{
+			std::vector<int> cluster;
+			UpdateCluster(points, tree, distanceTol, i, cluster, isProcessedVector);
+			clusters.push_back(cluster);
+		}
+	}
 
 	return clusters;
 }
@@ -109,6 +139,7 @@ int main()
 	std::vector<int> nearby = tree->search({-6, 7}, 3.0);
 	// std::vector<int> nearby = tree->search({7.0, 7.0}, 3.0);
 	// std::vector<int> nearby = tree->search({0, -7.0}, 3.0);
+
 	for (int index : nearby)
 		std::cout << index << ",";
 	std::cout << std::endl;
