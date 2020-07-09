@@ -18,7 +18,9 @@ pcl::visualization::PCLVisualizer::Ptr initScene(Box window, int zoom)
 	viewer->setCameraPosition(0, 0, zoom, 0, 1, 0);
 	viewer->addCoordinateSystem(1.0);
 
-	// viewer->addCube(window.x_min, window.x_max, window.y_min, window.y_max, 0, 0, 1, 1, 1, "window");
+	// Note: Added wireframe representation to get the looks of those shown in lecture
+	viewer->addCube(window.x_min, window.x_max, window.y_min, window.y_max, 0, 0, 1, 1, 1, "window");
+	viewer->setShapeRenderingProperties(pcl::visualization::PCL_VISUALIZER_REPRESENTATION, pcl::visualization::PCL_VISUALIZER_REPRESENTATION_WIREFRAME, "window");
 	return viewer;
 }
 
