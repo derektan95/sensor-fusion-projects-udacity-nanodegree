@@ -16,6 +16,10 @@ processPointClouds.h
 processPointClouds.cpp
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/processPointClouds.cpp
 
+/home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/kdtree3D.h
+render/render.h
+/home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/render.h
+
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/processPointClouds.cpp
 processPointClouds.h
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/processPointClouds.h
@@ -55,6 +59,8 @@ unordered_set
 -
 render/box.h
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/box.h
+kdtree3D.h
+/home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/kdtree3D.h
 
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/lidar/SFND_Lidar_Obstacle_Detection/src/render/box.h
 Eigen/Geometry
