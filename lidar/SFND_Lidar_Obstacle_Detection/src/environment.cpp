@@ -112,16 +112,26 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
     bool render_clusters = true;
     bool render_box = true;
 
+    // HYPER PARAMETERS
+    Eigen::Vector4f boxFilterMin = {-15.0f, -6.0f, -5.0f, 1};
+    Eigen::Vector4f boxFilterMax = {35.0f, 7.0f, 5.0f, 1};
+    int segmentationMaxIterations = 20;
+    float segmentationDistThreshold = 0.2;
+    float voxelFilterResolution = 0.2;
+    float clusterTolerance = 0.4;
+    int clusterMinSize = 10;
+    int clusterMaxSize = 1000;
+
     if (render_pointCloud)
         renderPointCloud(viewer, inputCloud, "inputCloud"); //overloaded renderPointCloud function for point<XYZI> type.
 
     // Voxel grid filtering + box filtering to reduce number of points
-    pcl::PointCloud<pcl::PointXYZI>::Ptr filteredCloud = pointProcessor->FilterCloud(inputCloud, 0.2f, Eigen::Vector4f(-15.0f, -6.0f, -5.0f, 1), Eigen::Vector4f(35.0f, 7.0f, 5.0f, 1));
+    pcl::PointCloud<pcl::PointXYZI>::Ptr filteredCloud = pointProcessor->FilterCloud(inputCloud, voxelFilterResolution, boxFilterMin, boxFilterMax);
     if (render_pointCloud_filtered)
         renderPointCloud(viewer, filteredCloud, "filterCloud");
 
     // Plane segmentation
-    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessor->SegmentPlaneOwnImplementation(filteredCloud, 20, 0.2);
+    std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessor->SegmentPlaneOwnImplementation(filteredCloud, segmentationMaxIterations, segmentationDistThreshold);
     // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessor->SegmentPlane(filteredCloud, 100, 0.2);
     if (render_obst)
         renderPointCloud(viewer, segmentCloud.first, "obstCloud", Color(1, 0, 0));
@@ -129,7 +139,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
         renderPointCloud(viewer, segmentCloud.second, "planeCloud", Color(0, 1, 0));
 
     // Use Point Processor object to identify and render point clusters
-    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessor->ClusteringOwnImplementation(segmentCloud.first, 0.4, 10, 1000);
+    std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessor->ClusteringOwnImplementation(segmentCloud.first, clusterTolerance, clusterMinSize, clusterMaxSize);
     // std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessor->Clustering(segmentCloud.first, 1.0, 3, 30);
     int clusterId = 0;
     std::vector<Color> colors = {Color(1, 0, 0), Color(1, 1, 0), Color(0, 0, 1)};
