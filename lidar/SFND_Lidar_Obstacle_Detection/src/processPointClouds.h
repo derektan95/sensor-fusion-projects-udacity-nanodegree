@@ -33,10 +33,10 @@ public:
     void numPoints(typename pcl::PointCloud<PointT>::Ptr cloud);
 
     // USING OWN IMEPLMENTATION
-    typename pcl::PointCloud<PointT>::Ptr FilterCloud(typename pcl::PointCloud<PointT>::Ptr &cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint);
-    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SegmentPlaneOwnImplementation(typename pcl::PointCloud<PointT>::Ptr &cloud, int maxIterations, float distanceThreshold);
-    std::unordered_set<int> RansacOwnImplementation3D(typename pcl::PointCloud<PointT>::Ptr &cloud, int maxIterations, float distanceTol);
-    std::vector<typename pcl::PointCloud<PointT>::Ptr> ClusteringOwnImplementation(typename pcl::PointCloud<PointT>::Ptr &cloud, float clusterTolerance, int minSize, int maxSize);
+    typename pcl::PointCloud<PointT>::Ptr FilterCloud(const typename pcl::PointCloud<PointT>::Ptr &cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint);
+    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SegmentPlaneOwnImplementation(const typename pcl::PointCloud<PointT>::Ptr &cloud, int maxIterations, float distanceThreshold);
+    std::unordered_set<int> RansacOwnImplementation3D(const typename pcl::PointCloud<PointT>::Ptr &cloud, int maxIterations, float distanceTol);
+    std::vector<typename pcl::PointCloud<PointT>::Ptr> ClusteringOwnImplementation(const typename pcl::PointCloud<PointT>::Ptr &cloud, float clusterTolerance, int minSize, int maxSize);
     std::vector<std::vector<int>> EuclideanClusterOwnImplementation(const std::vector<std::vector<float>> &points, KdTree *&tree, float distanceTol, float minSize, float maxSize);
     void UpdateCluster(const std::vector<std::vector<float>> &points, KdTree *tree, float distanceTol, int pointIdx, std::vector<int> &cluster, std::vector<bool> &isProcessedVector);
 

@@ -116,7 +116,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
         renderPointCloud(viewer, inputCloud, "inputCloud"); //overloaded renderPointCloud function for point<XYZI> type.
 
     // Voxel grid filtering + box filtering to reduce number of points
-    pcl::PointCloud<pcl::PointXYZI>::Ptr filteredCloud = pointProcessor->FilterCloud(inputCloud, 0.2f, Eigen::Vector4f(-10.0f, -6.0f, -5.0f, 1), Eigen::Vector4f(13.0f, 7.0f, 5.0f, 1));
+    pcl::PointCloud<pcl::PointXYZI>::Ptr filteredCloud = pointProcessor->FilterCloud(inputCloud, 0.2f, Eigen::Vector4f(-15.0f, -6.0f, -5.0f, 1), Eigen::Vector4f(35.0f, 7.0f, 5.0f, 1));
     if (render_pointCloud_filtered)
         renderPointCloud(viewer, filteredCloud, "filterCloud");
 
@@ -132,7 +132,6 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
     std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessor->ClusteringOwnImplementation(segmentCloud.first, 0.4, 50, 1000);
     // std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessor->Clustering(segmentCloud.first, 1.0, 3, 30);
     int clusterId = 0;
-    int colorID = 0;
     std::vector<Color> colors = {Color(1, 0, 0), Color(1, 1, 0), Color(0, 0, 1)};
 
     for (pcl::PointCloud<pcl::PointXYZI>::Ptr cluster : cloudClusters)
@@ -141,16 +140,15 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
         {
             std::cout << "cluster size ";
             pointProcessor->numPoints(cluster);
-            renderPointCloud(viewer, cluster, "obstCloud" + std::to_string(clusterId), colors[clusterId]);
+            renderPointCloud(viewer, cluster, "obstCloud" + std::to_string(clusterId), colors[clusterId % colors.size()]);
         }
 
         if (render_box)
         {
             Box box = pointProcessor->BoundingBox(cluster);
-            renderBox(viewer, box, clusterId, colors[clusterId]);
+            renderBox(viewer, box, clusterId);
         }
         ++clusterId;
-        colorID = clusterId % colors.size();
     }
 }
 
