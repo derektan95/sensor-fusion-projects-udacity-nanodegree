@@ -12,7 +12,7 @@
             // "program": "${workspaceFolder}/src/quiz/cluster/build/quizCluster",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

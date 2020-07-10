@@ -36,6 +36,7 @@ std::vector<Car> initHighway(bool renderScene, pcl::visualization::PCLVisualizer
     return cars;
 }
 
+// Using simulated point cloud data.
 void simpleHighway(pcl::visualization::PCLVisualizer::Ptr &viewer)
 {
     // ----------------------------------------------------
@@ -96,6 +97,21 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr &viewer)
     }
 }
 
+// Using real point cloud data.
+void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer)
+{
+    // ----------------------------------------------------
+    // -----Open 3D viewer and display City Block     -----
+    // ----------------------------------------------------
+
+    ProcessPointClouds<pcl::PointXYZI> *pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>(); // init in stack or heap is ok.
+    pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
+    // renderPointCloud(viewer, inputCloud, "inputCloud"); //overloaded renderPointCloud function for point<XYZI> type.
+
+    pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud, 0.1f, Eigen::Vector4f(-25.0f, -25.0f, -25.0f, 1), Eigen::Vector4f(25.0f, 25.0f, 25.0f, 1));
+    renderPointCloud(viewer, filterCloud, "filterCloud");
+}
+
 //setAngle: SWITCH CAMERA ANGLE {XY, TopDown, Side, FPS}
 void initCamera(CameraAngle setAngle, pcl::visualization::PCLVisualizer::Ptr &viewer)
 {
@@ -134,10 +150,8 @@ int main(int argc, char **argv)
     CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
 
-    std::cout << "Before Simply Highway function" << std::endl;
-    simpleHighway(viewer);
-
-    std::cout << "Before viewer is activated" << std::endl;
+    // simpleHighway(viewer);
+    cityBlock(viewer);
 
     while (!viewer->wasStopped())
     {

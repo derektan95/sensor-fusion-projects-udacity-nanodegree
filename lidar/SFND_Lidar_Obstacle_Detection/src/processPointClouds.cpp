@@ -217,11 +217,45 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
 
     // TODO:: Fill in the function to do voxel grid point reduction and region based filtering
 
+    typename pcl::PointCloud<PointT>::Ptr filteredCloud(new pcl::PointCloud<PointT>());
+
+    // Filter based on box parameters - exclude everything outside of box to minimize num points
+    pcl::CropBox<PointT> boxFilter(true);
+    boxFilter.setMin(minPoint);
+    boxFilter.setMax(maxPoint);
+    boxFilter.setInputCloud(cloud);
+    boxFilter.filter(*filteredCloud);
+
+    // Filter using voxel grid method - make points more sparse
+    pcl::VoxelGrid<PointT> vg;
+    vg.setInputCloud(filteredCloud);
+    vg.setLeafSize(filterRes, filterRes, filterRes);
+    vg.filter(*filteredCloud);
+
+    // Remove points from car which lidar is mounted on - inverse box filter method
+    std::vector<int> indices;
+    pcl::CropBox<PointT> roofBoxFilter(true);
+    roofBoxFilter.setMin(Eigen::Vector4f(-1.5, -1.7, -1, 1));
+    roofBoxFilter.setMax(Eigen::Vector4f(2.6, 1.7, -0.4, 1));
+    roofBoxFilter.setInputCloud(filteredCloud);
+    roofBoxFilter.filter(indices); // Store index of points to be filtered
+
+    // Define inliers for separation (like in plane segmentation)
+    pcl::PointIndices::Ptr inliers{new pcl::PointIndices};
+    for (int pointIdx : indices)
+        inliers->indices.push_back(pointIdx);
+
+    pcl::ExtractIndices<PointT> extract;
+    extract.setInputCloud(filteredCloud);
+    extract.setIndices(inliers);
+    extract.setNegative(true);
+    extract.filter(*filteredCloud);
+
     auto endTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     std::cout << "filtering took " << elapsedTime.count() << " milliseconds" << std::endl;
 
-    return cloud;
+    return filteredCloud;
 }
 
 template <typename PointT>
