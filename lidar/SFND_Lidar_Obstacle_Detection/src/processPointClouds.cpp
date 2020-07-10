@@ -28,14 +28,14 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     auto startTime = std::chrono::steady_clock::now();
 
     //  Fill in this function to find inliers for the cloud - own implementation
-    std::unordered_set<int> inliers = RansacOwnImplementation3D(cloud, 50, 0.5);
+    std::unordered_set<int> inliers = RansacOwnImplementation3D(cloud, maxIterations, distanceThreshold);
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
+    typename pcl::PointCloud<PointT>::Ptr cloudInliers(new pcl::PointCloud<PointT>());
+    typename pcl::PointCloud<PointT>::Ptr cloudOutliers(new pcl::PointCloud<PointT>());
 
     for (int index = 0; index < cloud->points.size(); index++)
     {
-        pcl::PointXYZ point = cloud->points[index];
+        PointT point = cloud->points[index];
         if (inliers.count(index))
             cloudInliers->points.push_back(point);
         else
@@ -135,7 +135,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
     }
 
     // Configure EuclideanCluster parameters
-    std::vector<std::vector<int>> clusterIndices = EuclideanClusterOwnImplementation(pointsVec, tree3D, 3.0);
+    std::vector<std::vector<int>> clusterIndices = EuclideanClusterOwnImplementation(pointsVec, tree3D, clusterTolerance, minSize, maxSize);
 
     // Iterate through each cluster in clusterIndices
     for (std::vector<int> cluster : clusterIndices)
@@ -167,7 +167,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 // Returns vector of cluster of points that are grouped together using euclideanCluster method.
 // Makes sure that every point's neighbours are considered when clustering.
 template <typename PointT>
-std::vector<std::vector<int>> ProcessPointClouds<PointT>::EuclideanClusterOwnImplementation(const std::vector<std::vector<float>> &points, KdTree *tree, float distanceTol)
+std::vector<std::vector<int>> ProcessPointClouds<PointT>::EuclideanClusterOwnImplementation(const std::vector<std::vector<float>> &points, KdTree *tree, float distanceTol, float minSize, float maxSize)
 {
 
     // TODO: Fill out this function to return list of indices for each cluster
@@ -181,7 +181,8 @@ std::vector<std::vector<int>> ProcessPointClouds<PointT>::EuclideanClusterOwnImp
         {
             std::vector<int> cluster;
             UpdateCluster(points, tree, distanceTol, i, cluster, isProcessedVector);
-            clusters.push_back(cluster);
+            if (cluster.size() >= minSize && cluster.size() <= maxSize)
+                clusters.push_back(cluster);
         }
     }
 
