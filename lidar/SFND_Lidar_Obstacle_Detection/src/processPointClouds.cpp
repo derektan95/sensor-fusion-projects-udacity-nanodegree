@@ -22,7 +22,7 @@ void ProcessPointClouds<PointT>::numPoints(typename pcl::PointCloud<PointT>::Ptr
 // Own implementation of Plane Segmentation.
 // Locates and separates plane from overall point cloud.
 template <typename PointT>
-std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SegmentPlaneOwnImplementation(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold)
+std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SegmentPlaneOwnImplementation(typename pcl::PointCloud<PointT>::Ptr &cloud, int maxIterations, float distanceThreshold)
 {
     // Time segmentation process
     auto startTime = std::chrono::steady_clock::now();
@@ -59,7 +59,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 // Own implementation of Ransac 3D.
 // Uses Ransac in 3D to identify plane.
 template <typename PointT>
-std::unordered_set<int> ProcessPointClouds<PointT>::RansacOwnImplementation3D(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol)
+std::unordered_set<int> ProcessPointClouds<PointT>::RansacOwnImplementation3D(typename pcl::PointCloud<PointT>::Ptr &cloud, int maxIterations, float distanceTol)
 {
     std::unordered_set<int> inliersResult;
     srand(time(NULL));
@@ -115,7 +115,7 @@ std::unordered_set<int> ProcessPointClouds<PointT>::RansacOwnImplementation3D(ty
 // Own implementation of Clustering 3D.
 // Cluster point clouds representing obstacles.
 template <typename PointT>
-std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::ClusteringOwnImplementation(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize)
+std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::ClusteringOwnImplementation(typename pcl::PointCloud<PointT>::Ptr &cloud, float clusterTolerance, int minSize, int maxSize)
 {
 
     // Time clustering process
@@ -167,7 +167,7 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 // Returns vector of cluster of points that are grouped together using euclideanCluster method.
 // Makes sure that every point's neighbours are considered when clustering.
 template <typename PointT>
-std::vector<std::vector<int>> ProcessPointClouds<PointT>::EuclideanClusterOwnImplementation(const std::vector<std::vector<float>> &points, KdTree *tree, float distanceTol, float minSize, float maxSize)
+std::vector<std::vector<int>> ProcessPointClouds<PointT>::EuclideanClusterOwnImplementation(const std::vector<std::vector<float>> &points, KdTree *&tree, float distanceTol, float minSize, float maxSize)
 {
 
     // TODO: Fill out this function to return list of indices for each cluster
@@ -202,7 +202,10 @@ void ProcessPointClouds<PointT>::UpdateCluster(const std::vector<std::vector<flo
 
         for (int idx : potentialPointClusterIdx)
         {
-            UpdateCluster(points, tree, distanceTol, idx, cluster, isProcessedVector);
+            if (!isProcessedVector[idx])
+            {
+                UpdateCluster(points, tree, distanceTol, idx, cluster, isProcessedVector);
+            }
         }
     }
 }
@@ -210,7 +213,7 @@ void ProcessPointClouds<PointT>::UpdateCluster(const std::vector<std::vector<flo
 // --- USING INSTRUCTOR'S IMPLEMENTATION --- //
 
 template <typename PointT>
-typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(typename pcl::PointCloud<PointT>::Ptr cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint)
+typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(typename pcl::PointCloud<PointT>::Ptr &cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint)
 {
 
     // Time segmentation process
