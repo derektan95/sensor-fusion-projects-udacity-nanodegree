@@ -197,13 +197,13 @@ int main(int argc, char **argv)
     std::cout << "starting enviroment" << std::endl;
 
     pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-    CameraAngle setAngle = XY;
+    CameraAngle setAngle = FPS;
     initCamera(setAngle, viewer);
 
     // simpleHighway(viewer);
-    ProcessPointClouds<pcl::PointXYZI> *pointProcessor = new ProcessPointClouds<pcl::PointXYZI>(); // init in stack or heap is ok.
-    std::vector<boost::filesystem::path> stream = pointProcessor->streamPcd("../src/sensors/data/pcd/data_1");
-    auto streamIterator = stream.begin(); // iterator pointing at pcd data stream.
+    ProcessPointClouds<pcl::PointXYZI> *pointProcessor = new ProcessPointClouds<pcl::PointXYZI>();             // init in stack or heap is ok.
+    std::vector<boost::filesystem::path> stream = pointProcessor->streamPcd("../src/sensors/data/pcd/data_1"); // alternative: data 2
+    auto streamIterator = stream.begin();                                                                      // iterator pointing at pcd data stream.
     pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud;
 
     // Update loop - keep looping until viewer is closed
