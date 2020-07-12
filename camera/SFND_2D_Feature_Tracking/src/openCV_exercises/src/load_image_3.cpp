@@ -26,14 +26,34 @@ void loadImage3()
 
     // display images from the vector
     string windowName = "First steps in OpenCV";
+    // int imgNum = 4;
+    // cv::namedWindow(windowName, 1); // create window
+    // for (auto it = imgList.begin(); it != imgList.end(); ++it)
+    // {
+
+    //     // STUDENT TASK : Prevent image 7 from being displayed
+    // imgNum++;
+    // if (imgNum == 7)
+    //     continue;
+
+    //     // display image
+    //     cv::imshow(windowName, *it);
+    //     cv::waitKey(0); // wait for keyboard input before continuing
+    // }
+
+    // Instead of using iterators...
     cv::namedWindow(windowName, 1); // create window
-    for (auto it = imgList.begin(); it != imgList.end(); ++it)
+    int imgNum = 4;
+    for (auto &pic : imgList)
     {
 
         // STUDENT TASK : Prevent image 7 from being displayed
+        imgNum++;
+        if (imgNum == 7)
+            continue;
 
         // display image
-        cv::imshow(windowName, *it);
+        cv::imshow(windowName, pic);
         cv::waitKey(0); // wait for keyboard input before continuing
     }
 }

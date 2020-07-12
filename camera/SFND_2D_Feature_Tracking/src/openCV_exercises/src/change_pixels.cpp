@@ -15,6 +15,10 @@ void changePixels()
     for (int r = 230; r < 250; r++)
     {
         // STUDENT TASK : loop over all columns and set matrix elements to 255
+        for (int c = 0; c < ncols; c++)
+        {
+            m1_8u.at<uint>(r, c) = 255;
+        }
     }
 
     // show result

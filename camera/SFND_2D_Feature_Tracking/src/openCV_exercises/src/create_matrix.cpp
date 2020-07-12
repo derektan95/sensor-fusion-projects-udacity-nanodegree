@@ -15,6 +15,10 @@ void createMatrix1()
     // STUDENT TASK :
     // Create a variable of type cv::Mat* named m3_8u which has three channels with a
     // depth of 8bit per channel. Then, set the first channel to 255 and display the result.
+    int nrows_1 = 480, ncols_1 = 640;
+    cv::Mat *m3_8u(new cv::Mat);
+    m3_8u->create(nrows_1, ncols_1, CV_8UC3); // three-channel matrix with 8bit unsigned elements
+    m3_8u->setTo(cv::Scalar(255, 0, 0));      // set entire image to blue
 
     // show result
     string windowName = "First steps in OpenCV (m1_8u)";
@@ -24,6 +28,10 @@ void createMatrix1()
 
     // STUDENT TASK :
     // Display the results from the STUDENT TASK above
+    string windowName_1 = "First steps in OpenCV (m3_8u)";
+    cv::namedWindow(windowName_1, 2); // create window
+    cv::imshow(windowName_1, *m3_8u);
+    cv::waitKey(0); // wait for keyboard input before continuing
 }
 
 int main()

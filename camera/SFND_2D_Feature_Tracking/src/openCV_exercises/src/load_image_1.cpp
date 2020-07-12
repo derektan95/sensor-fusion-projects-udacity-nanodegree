@@ -8,7 +8,7 @@ using namespace std;
 
 void loadImage1()
 {
-    // load image from file
+    // load image from file into img mat variable
     cv::Mat img;
     img = cv::imread("../images/img1.png");
 
