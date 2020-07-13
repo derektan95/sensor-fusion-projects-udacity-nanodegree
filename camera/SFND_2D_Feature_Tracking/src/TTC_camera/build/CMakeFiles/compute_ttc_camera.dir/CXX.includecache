@@ -13,6 +13,8 @@ numeric
 -
 opencv2/core.hpp
 -
+math.h
+-
 dataStructures.h
 /home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_2D_Feature_Tracking/src/TTC_camera/src/dataStructures.h
 structIO.hpp

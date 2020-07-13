@@ -1,7 +1,7 @@
 #include <iostream>
 #include <numeric>
 #include <opencv2/core.hpp>
-
+#include <math.h>
 
 #include "dataStructures.h"
 #include "structIO.hpp"
@@ -50,24 +50,38 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
         return;
     }
 
-    // compute camera-based TTC from distance ratios
-    double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
+    // // compute camera-based TTC from distance ratios
+    // double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
 
-    double dT = 1 / frameRate;
-    TTC = -dT / (1 - meanDistRatio);
+    // double dT = 1 / frameRate;
+    // TTC = -dT / (1 - meanDistRatio);
 
     // STUDENT TASK (replacement for meanDistRatio)
+    std::sort(distRatios.begin(), distRatios.end());
+    double medianDistRatioIdx = floor(distRatios.size() / 2.0);
+    double medianDistRatio = 0;
+    if (distRatios.size() % 2 == 0)
+    {
+        medianDistRatio = (distRatios[medianDistRatioIdx - 1] + distRatios[medianDistRatioIdx]) / 2.0;
+    }
+    else
+    {
+        medianDistRatio = distRatios[medianDistRatioIdx];
+    }
+
+    double dT = 1 / frameRate;
+    TTC = -dT / (1 - medianDistRatio);
 }
 
 int main()
 {
     vector<cv::KeyPoint> kptsSource, kptsRef;
     readKeypoints("../dat/C23A5_KptsSource_AKAZE.dat", kptsSource); // readKeypoints("./dat/C23A5_KptsSource_SHI-BRISK.dat"
-    readKeypoints("../dat/C23A5_KptsRef_AKAZE.dat", kptsRef); // readKeypoints("./dat/C23A5_KptsRef_SHI-BRISK.dat"
+    readKeypoints("../dat/C23A5_KptsRef_AKAZE.dat", kptsRef);       // readKeypoints("./dat/C23A5_KptsRef_SHI-BRISK.dat"
 
     vector<cv::DMatch> matches;
     readKptMatches("../dat/C23A5_KptMatches_AKAZE.dat", matches); // readKptMatches("./dat/C23A5_KptMatches_SHI-BRISK.dat", matches);
-    double ttc; 
+    double ttc;
     computeTTCCamera(kptsSource, kptsRef, matches, 10.0, ttc);
     cout << "ttc = " << ttc << "s" << endl;
 }
