@@ -60,39 +60,39 @@ CMAKE_SOURCE_DIR = /home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera
 CMAKE_BINARY_DIR = /home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_2D_Feature_Tracking/src/detect_keypoints/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/detect_keypoints.dir
+# Target rules for target CMakeFiles/detect_keypoints_fast_shi_tomasi.dir
 
 # All Build rule for target.
-CMakeFiles/detect_keypoints.dir/all:
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/depend
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_2D_Feature_Tracking/src/detect_keypoints/build/CMakeFiles --progress-num=1,2 "Built target detect_keypoints"
-.PHONY : CMakeFiles/detect_keypoints.dir/all
+CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/all:
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/depend
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_2D_Feature_Tracking/src/detect_keypoints/build/CMakeFiles --progress-num=1,2 "Built target detect_keypoints_fast_shi_tomasi"
+.PHONY : CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/all
 
 # Include target in all.
-all: CMakeFiles/detect_keypoints.dir/all
+all: CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/detect_keypoints.dir/rule: cmake_check_build_system
+CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_2D_Feature_Tracking/src/detect_keypoints/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/detect_keypoints.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_2D_Feature_Tracking/src/detect_keypoints/build/CMakeFiles 0
-.PHONY : CMakeFiles/detect_keypoints.dir/rule
+.PHONY : CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/rule
 
 # Convenience name for target.
-detect_keypoints: CMakeFiles/detect_keypoints.dir/rule
+detect_keypoints_fast_shi_tomasi: CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/rule
 
-.PHONY : detect_keypoints
-
-# clean rule for target.
-CMakeFiles/detect_keypoints.dir/clean:
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/clean
-.PHONY : CMakeFiles/detect_keypoints.dir/clean
+.PHONY : detect_keypoints_fast_shi_tomasi
 
 # clean rule for target.
-clean: CMakeFiles/detect_keypoints.dir/clean
+CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/clean:
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/clean
+.PHONY : CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/clean
 
 .PHONY : clean
 

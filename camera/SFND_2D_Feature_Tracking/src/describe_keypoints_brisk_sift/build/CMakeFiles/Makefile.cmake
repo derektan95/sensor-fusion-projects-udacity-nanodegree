@@ -120,5 +120,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/detect_keypoints.dir/DependInfo.cmake"
+  "CMakeFiles/describe_keypoints_brisk_sift.dir/DependInfo.cmake"
   )

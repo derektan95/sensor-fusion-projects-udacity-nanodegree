@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named detect_keypoints
+# Target rules for targets named detect_keypoints_fast_shi_tomasi
 
 # Build rule for target.
-detect_keypoints: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 detect_keypoints
-.PHONY : detect_keypoints
+detect_keypoints_fast_shi_tomasi: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 detect_keypoints_fast_shi_tomasi
+.PHONY : detect_keypoints_fast_shi_tomasi
 
 # fast build rule for target.
-detect_keypoints/fast:
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/build
-.PHONY : detect_keypoints/fast
+detect_keypoints_fast_shi_tomasi/fast:
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build
+.PHONY : detect_keypoints_fast_shi_tomasi/fast
 
-src/detect_keypoints.o: src/detect_keypoints.cpp.o
+src/detect_keypoints_fast_shi_tomasi.o: src/detect_keypoints_fast_shi_tomasi.cpp.o
 
-.PHONY : src/detect_keypoints.o
+.PHONY : src/detect_keypoints_fast_shi_tomasi.o
 
 # target to build an object file
-src/detect_keypoints.cpp.o:
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/src/detect_keypoints.cpp.o
-.PHONY : src/detect_keypoints.cpp.o
+src/detect_keypoints_fast_shi_tomasi.cpp.o:
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/src/detect_keypoints_fast_shi_tomasi.cpp.o
+.PHONY : src/detect_keypoints_fast_shi_tomasi.cpp.o
 
-src/detect_keypoints.i: src/detect_keypoints.cpp.i
+src/detect_keypoints_fast_shi_tomasi.i: src/detect_keypoints_fast_shi_tomasi.cpp.i
 
-.PHONY : src/detect_keypoints.i
+.PHONY : src/detect_keypoints_fast_shi_tomasi.i
 
 # target to preprocess a source file
-src/detect_keypoints.cpp.i:
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/src/detect_keypoints.cpp.i
-.PHONY : src/detect_keypoints.cpp.i
+src/detect_keypoints_fast_shi_tomasi.cpp.i:
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/src/detect_keypoints_fast_shi_tomasi.cpp.i
+.PHONY : src/detect_keypoints_fast_shi_tomasi.cpp.i
 
-src/detect_keypoints.s: src/detect_keypoints.cpp.s
+src/detect_keypoints_fast_shi_tomasi.s: src/detect_keypoints_fast_shi_tomasi.cpp.s
 
-.PHONY : src/detect_keypoints.s
+.PHONY : src/detect_keypoints_fast_shi_tomasi.s
 
 # target to generate assembly for a file
-src/detect_keypoints.cpp.s:
-	$(MAKE) -f CMakeFiles/detect_keypoints.dir/build.make CMakeFiles/detect_keypoints.dir/src/detect_keypoints.cpp.s
-.PHONY : src/detect_keypoints.cpp.s
+src/detect_keypoints_fast_shi_tomasi.cpp.s:
+	$(MAKE) -f CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/build.make CMakeFiles/detect_keypoints_fast_shi_tomasi.dir/src/detect_keypoints_fast_shi_tomasi.cpp.s
+.PHONY : src/detect_keypoints_fast_shi_tomasi.cpp.s
 
 # Help Target
 help:
@@ -157,11 +157,11 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... detect_keypoints"
+	@echo "... detect_keypoints_fast_shi_tomasi"
 	@echo "... edit_cache"
-	@echo "... src/detect_keypoints.o"
-	@echo "... src/detect_keypoints.i"
-	@echo "... src/detect_keypoints.s"
+	@echo "... src/detect_keypoints_fast_shi_tomasi.o"
+	@echo "... src/detect_keypoints_fast_shi_tomasi.i"
+	@echo "... src/detect_keypoints_fast_shi_tomasi.s"
 .PHONY : help
 
 

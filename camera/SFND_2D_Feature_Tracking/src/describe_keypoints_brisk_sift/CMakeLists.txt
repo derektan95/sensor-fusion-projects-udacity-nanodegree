@@ -14,5 +14,5 @@ link_directories(${OpenCV_LIBRARY_DIRS})
 add_definitions(${OpenCV_DEFINITIONS})
 
 # Executables for exercise
-add_executable (detect_keypoints src/detect_keypoints.cpp)
-target_link_libraries (detect_keypoints ${OpenCV_LIBRARIES})
+add_executable (describe_keypoints_brisk_sift src/describe_keypoints_brisk_sift.cpp)
+target_link_libraries (describe_keypoints_brisk_sift ${OpenCV_LIBRARIES})
