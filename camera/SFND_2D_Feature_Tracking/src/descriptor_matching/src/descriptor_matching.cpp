@@ -106,6 +106,6 @@ int main()
     vector<cv::DMatch> matches;
     string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
     string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-    string selectorType = "SEL_KNN";      // SEL_NN, SEL_KNN
+    string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
     matchDescriptors(imgSource, imgRef, kptsSource, kptsRef, descSource, descRef, matches, descriptorType, matcherType, selectorType);
 }
