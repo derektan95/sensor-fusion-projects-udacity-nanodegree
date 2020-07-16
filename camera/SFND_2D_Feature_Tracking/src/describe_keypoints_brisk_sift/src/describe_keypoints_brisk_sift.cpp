@@ -46,7 +46,7 @@ void descKeypoints1()
     // with regard to processing speed and the number and
     // visual appearance of keypoints.
 
-    // BRISK detector
+    // SIFT detector
     // detector = cv::xfeatures2d::SIFT::create();
     detector = cv::SIFT::create();
     vector<cv::KeyPoint> kptsSIFT;

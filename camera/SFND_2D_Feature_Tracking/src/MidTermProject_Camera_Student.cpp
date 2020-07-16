@@ -78,7 +78,8 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
+        string detectorType = "AKAZE";  // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+        cout << "Detector Type: " << detectorType << endl;
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
@@ -88,10 +89,35 @@ int main(int argc, const char *argv[])
         {
             detKeypointsShiTomasi(keypoints, imgGray, false);
         }
+        else if (detectorType.compare("HARRIS") == 0)
+        {
+            detKeypointsHarris(keypoints, imgGray, false);
+        }
+        else if (detectorType.compare("FAST") == 0)
+        {
+            detKeypointsModern(keypoints, imgGray, "FAST", false);
+        }
+        else if (detectorType.compare("BRISK") == 0)
+        {
+            detKeypointsModern(keypoints, imgGray, "BRISK", false);
+        }
+        else if (detectorType.compare("ORB") == 0)
+        {
+            detKeypointsModern(keypoints, imgGray, "ORB", false);
+        }
+        else if (detectorType.compare("AKAZE") == 0)
+        {
+            detKeypointsModern(keypoints, imgGray, "AKAZE", false);
+        }
+        else if (detectorType.compare("SIFT") == 0)
+        {
+            detKeypointsModern(keypoints, imgGray, "SIFT", false);
+        }
         else
         {
-            //...
+            cout << "Unknown Detector Type. Please change to type specified in code." << endl;
         }
+
         //// EOF STUDENT ASSIGNMENT
 
         //// STUDENT ASSIGNMENT
@@ -165,6 +191,7 @@ int main(int argc, const char *argv[])
             (dataBuffer.end() - 1)->kptMatches = matches;
 
             cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            cout << endl;
 
             // visualize matches between current and previous image
             bVis = true;
