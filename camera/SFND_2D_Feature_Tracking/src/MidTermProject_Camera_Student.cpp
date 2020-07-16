@@ -54,6 +54,7 @@ int main(int argc, const char *argv[])
         // load image from file and convert to grayscale
         cv::Mat img, imgGray;
         img = cv::imread(imgFullFilename);
+        // img.convertTo(img, CV_8U);
         cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
 
         //// STUDENT ASSIGNMENT
@@ -78,7 +79,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "HARRIS"; // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+        string detectorType = "FAST";   // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
         cout << "Detector Type: " << detectorType << endl;
 
         //// STUDENT ASSIGNMENT
@@ -143,13 +144,14 @@ int main(int argc, const char *argv[])
         //// EOF STUDENT ASSIGNMENT
 
         // optional : limit number of keypoints (helpful for debugging and learning)
-        bool bLimitKpts = true;
+        bool bLimitKpts = false;
         if (bLimitKpts)
         {
             int maxKeypoints = 50;
 
+            // SHITOMASI has no response info, so keep the first 50 as they are sorted in descending quality order
             if (detectorType.compare("SHITOMASI") == 0)
-            { // there is no response info, so keep the first 50 as they are sorted in descending quality order
+            {
                 keypoints.erase(keypoints.begin() + maxKeypoints, keypoints.end());
             }
             cv::KeyPointsFilter::retainBest(keypoints, maxKeypoints);
@@ -164,10 +166,10 @@ int main(int argc, const char *argv[])
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.4 -> add the following descriptors in file matching2D.cpp and enable string-based selection based on descriptorType
-        //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
+        //// -> BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
         //// EOF STUDENT ASSIGNMENT
 
