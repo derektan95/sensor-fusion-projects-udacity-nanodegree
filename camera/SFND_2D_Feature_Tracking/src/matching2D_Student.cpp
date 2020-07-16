@@ -194,23 +194,23 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
 
     else if (detectorType.compare("BRISK") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::BRISK::create();
-        detector->detect(img, keypoints); // Perform detection
+        cv::Ptr<cv::FeatureDetector> detector = cv::BRISK::create(); // default param
+        detector->detect(img, keypoints);                            // Perform detection
     }
     else if (detectorType.compare("ORB") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::ORB::create();
-        detector->detect(img, keypoints); // Perform detection
+        cv::Ptr<cv::FeatureDetector> detector = cv::ORB::create(); // default param
+        detector->detect(img, keypoints);                          // Perform detection
     }
     else if (detectorType.compare("AKAZE") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::AKAZE::create();
-        detector->detect(img, keypoints); // Perform detection
+        cv::Ptr<cv::FeatureDetector> detector = cv::AKAZE::create(); // default param
+        detector->detect(img, keypoints);                            // Perform detection
     }
     else if (detectorType.compare("SIFT") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::SIFT::create();
-        detector->detect(img, keypoints); // Perform detection
+        cv::Ptr<cv::FeatureDetector> detector = cv::SIFT::create(); // default param
+        detector->detect(img, keypoints);                           // Perform detection
     }
     else
     {

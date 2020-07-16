@@ -78,7 +78,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "AKAZE";  // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+        string detectorType = "HARRIS"; // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
         cout << "Detector Type: " << detectorType << endl;
 
         //// STUDENT ASSIGNMENT
@@ -125,10 +125,19 @@ int main(int argc, const char *argv[])
 
         // only keep keypoints on the preceding vehicle
         bool bFocusOnVehicle = true;
-        cv::Rect vehicleRect(535, 180, 180, 150);
+        cv::Rect vehicleRect(535, 180, 180, 150); // bottom-left-x, bottom-left-y, width, height
         if (bFocusOnVehicle)
         {
-            // ...
+            vector<cv::KeyPoint> keypointFiltered;
+            for (auto &keypoint : keypoints)
+            {
+                if (vehicleRect.contains(keypoint.pt))
+                {
+                    keypointFiltered.push_back(keypoint);
+                }
+            }
+
+            keypoints = keypointFiltered;
         }
 
         //// EOF STUDENT ASSIGNMENT
