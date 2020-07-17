@@ -13,7 +13,12 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
 
     if (matcherType.compare("MAT_BF") == 0)
     {
+        // Hamming only works for binary descriptors!
         int normType = cv::NORM_HAMMING;
+        if (descriptorType == "DES_HOG")
+        {
+            normType = cv::NORM_L2;
+        }
         matcher = cv::BFMatcher::create(normType, crossCheck);
     }
     else if (matcherType.compare("MAT_FLANN") == 0)
@@ -32,6 +37,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     { // nearest neighbor (best match)
 
         matcher->match(descSource, descRef, matches); // Finds the best match for each descriptor in desc1
+        cout << "# Matched (KNN SELECTOR) Keypoints= " << matches.size() << endl;
     }
     else if (selectorType.compare("SEL_KNN") == 0)
     { // k nearest neighbors (k=2)
@@ -49,7 +55,8 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
                 matches.push_back(knn_matches[i][0]);
             }
         }
-        cout << "# keypoints removed = " << knn_matches.size() - matches.size() << endl;
+        // cout << "# keypoints removed (KNN SELECTOR) = " << knn_matches.size() - matches.size() << endl;
+        cout << "# Matched (KNN SELECTOR) Keypoints= " << knn_matches.size() << endl;
     }
 }
 
@@ -66,6 +73,13 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
 
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
+    }
+
+    if (descriptorType.compare("BRIEF") == 0)
+    {
+        // Default Parameters
+
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
     }
 
     else if (descriptorType.compare("ORB") == 0)
@@ -177,6 +191,7 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
     double k = 0.04;       // Harris parameter (see equation for details)
 
     // Detect Harris corners and normalize output
+    double t = (double)cv::getTickCount();
     cv::Mat dst, dst_norm, dst_norm_scaled;
     dst = cv::Mat::zeros(img.size(), CV_32FC1);
     cv::cornerHarris(img, dst, blockSize, apertureSize, k, cv::BORDER_DEFAULT);
@@ -226,6 +241,8 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
             }
         } // eof loop over cols
     }     // eof loop over rows
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << "Harris Detection with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
 
     // visualize keypoints
     if (bVis)
@@ -246,6 +263,8 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
 
 void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis)
 {
+    double t = (double)cv::getTickCount();
+
     if (detectorType.compare("FAST") == 0)
     {
         // Initialize detector container
@@ -281,6 +300,9 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     {
         cout << "Unknown Detector Type. Please change to type specified in code." << endl;
     }
+
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << detectorType << " Detector with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
 
     // visualize keypoints
     if (bVis)
