@@ -25,13 +25,14 @@ int main(int argc, const char *argv[])
     /* INIT VARIABLES AND DATA STRUCTURES */
 
     // TODO: CHANGE ME
-    int dataBufferSize = 2;                    // no. of images which are held in memory (ring buffer) at the same time
-    string detectorType = "SHITOMASI";         // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
-    string descriptorType = "BRIEF";           // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
-    string matcherType = "MAT_BF";             // MAT_BF, MAT_FLANN
-    string descriptorCategoryType = "DES_HOG"; // DES_BINARY, DES_HOG
-    string selectorType = "SEL_KNN";           // SEL_NN, SEL_KNN
+    int dataBufferSize = 2;                       // no. of images which are held in memory (ring buffer) at the same time
+    string detectorType = "BRISK";                // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+    string descriptorType = "BRISK";              // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+    string matcherType = "MAT_BF";                // MAT_BF, MAT_FLANN
+    string descriptorCategoryType = "DES_BINARY"; // DES_BINARY, DES_HOG
+    string selectorType = "SEL_KNN";              // SEL_NN, SEL_KNN
     bool bLimitKpts = false;
+    bool bVis = false; // visualize results
 
     // Initialization COUT
     cout << " --- INITIALIZATION DATA ---" << endl;
@@ -44,6 +45,12 @@ int main(int argc, const char *argv[])
         cout << " NOTE: Keypoints have been limited!" << endl;
     cout << " --- " << endl
          << endl;
+
+    // Used for Data Collection
+    vector<int> numKeypointsVec;
+    vector<int> numMatchesVec;
+    vector<double> timeKeypointDetectionVec;
+    vector<double> timeDescriptorExtractionVec;
 
     // data location
     string dataPath = "../";
@@ -58,7 +65,6 @@ int main(int argc, const char *argv[])
 
     // misc
     vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time - contains info about keypoints, matches etc
-    bool bVis = false;            // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -93,7 +99,7 @@ int main(int argc, const char *argv[])
         }
 
         //// EOF STUDENT ASSIGNMENT
-        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        // cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -106,31 +112,31 @@ int main(int argc, const char *argv[])
 
         if (detectorType.compare("SHITOMASI") == 0)
         {
-            detKeypointsShiTomasi(keypoints, imgGray, false);
+            detKeypointsShiTomasi(keypoints, imgGray, timeKeypointDetectionVec, false);
         }
         else if (detectorType.compare("HARRIS") == 0)
         {
-            detKeypointsHarris(keypoints, imgGray, false);
+            detKeypointsHarris(keypoints, imgGray, timeKeypointDetectionVec, false);
         }
         else if (detectorType.compare("FAST") == 0)
         {
-            detKeypointsModern(keypoints, imgGray, "FAST", false);
+            detKeypointsModern(keypoints, imgGray, "FAST", timeKeypointDetectionVec, false);
         }
         else if (detectorType.compare("BRISK") == 0)
         {
-            detKeypointsModern(keypoints, imgGray, "BRISK", false);
+            detKeypointsModern(keypoints, imgGray, "BRISK", timeKeypointDetectionVec, false);
         }
         else if (detectorType.compare("ORB") == 0)
         {
-            detKeypointsModern(keypoints, imgGray, "ORB", false);
+            detKeypointsModern(keypoints, imgGray, "ORB", timeKeypointDetectionVec, false);
         }
         else if (detectorType.compare("AKAZE") == 0)
         {
-            detKeypointsModern(keypoints, imgGray, "AKAZE", false);
+            detKeypointsModern(keypoints, imgGray, "AKAZE", timeKeypointDetectionVec, false);
         }
         else if (detectorType.compare("SIFT") == 0)
         {
-            detKeypointsModern(keypoints, imgGray, "SIFT", false);
+            detKeypointsModern(keypoints, imgGray, "SIFT", timeKeypointDetectionVec, false);
         }
         else
         {
@@ -159,12 +165,15 @@ int main(int argc, const char *argv[])
             keypoints = keypointFiltered;
         }
 
+        cout << detectorType << " Detection with n=" << keypoints.size() << " keypoints" << endl;
+        numKeypointsVec.push_back(keypoints.size());
+
         //// EOF STUDENT ASSIGNMENT
 
         // optional : limit number of keypoints (helpful for debugging and learning)
         if (bLimitKpts)
         {
-            int maxKeypoints = 50;
+            int maxKeypoints = 10;
 
             // SHITOMASI has no response info, so keep the first 50 as they are sorted in descending quality order
             if (detectorType.compare("SHITOMASI") == 0)
@@ -176,7 +185,7 @@ int main(int argc, const char *argv[])
 
         // push keypoints and descriptor for current frame to end of data buffer
         (dataBuffer.end() - 1)->keypoints = keypoints;
-        cout << "#2 : DETECT KEYPOINTS done" << endl;
+        // cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
@@ -185,13 +194,13 @@ int main(int argc, const char *argv[])
         //// -> BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
+        descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType, timeDescriptorExtractionVec);
         //// EOF STUDENT ASSIGNMENT
 
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;
 
-        cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
+        // cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
@@ -212,11 +221,12 @@ int main(int argc, const char *argv[])
 
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
+            numMatchesVec.push_back(matches.size());
 
-            cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            // cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = true;
+
             if (bVis)
             {
                 cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
@@ -229,7 +239,7 @@ int main(int argc, const char *argv[])
                 string windowName = "Matching keypoints between two camera images";
                 cv::namedWindow(windowName, 7);
                 cv::imshow(windowName, matchImg);
-                cout << "**PRESS ANY KEYS TO CONTINUE TO NEXT IMAGE!**" << endl;
+                // cout << "**PRESS ANY KEYS TO CONTINUE TO NEXT IMAGE!**" << endl;
                 cv::waitKey(0); // wait for key to be pressed
             }
             bVis = false;
@@ -238,6 +248,41 @@ int main(int argc, const char *argv[])
         cout << endl;
 
     } // eof loop over all images
+
+    // EXTRACT INFO FROM ALL VALUES
+    cout << "--- SUMMARY OF RESULTS ---" << endl;
+
+    cout << "NUMBER OF KEYPOINTS: " << endl;
+    for (int numKeypoints : numKeypointsVec)
+    {
+        cout << numKeypoints << ", ";
+    }
+
+    cout << endl
+         << endl;
+    cout << "NUMBER OF MATCHES: " << endl;
+    for (int numMatches : numMatchesVec)
+    {
+        cout << numMatches << ", ";
+    }
+
+    cout << endl
+         << endl;
+    cout << "TIME TAKEN (KEYPOINT DETECTION): " << endl;
+    for (double timeKeypointDetection : timeKeypointDetectionVec)
+    {
+        cout << timeKeypointDetection << ", ";
+    }
+
+    cout << endl
+         << endl;
+    cout << "TIME TAKEN (Descriptor Extraction): " << endl;
+    for (double timeDescriptorExtraction : timeDescriptorExtractionVec)
+    {
+        cout << timeDescriptorExtraction << ", ";
+    }
+    cout << endl
+         << endl;
 
     return 0;
 }
