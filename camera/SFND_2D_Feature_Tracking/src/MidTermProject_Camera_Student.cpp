@@ -26,13 +26,13 @@ int main(int argc, const char *argv[])
 
     // TODO: CHANGE ME
     int dataBufferSize = 2;                       // no. of images which are held in memory (ring buffer) at the same time
-    string detectorType = "BRISK";                // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
+    string detectorType = "SHITOMASI";            // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
     string descriptorType = "BRISK";              // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
     string matcherType = "MAT_BF";                // MAT_BF, MAT_FLANN
     string descriptorCategoryType = "DES_BINARY"; // DES_BINARY, DES_HOG
     string selectorType = "SEL_KNN";              // SEL_NN, SEL_KNN
-    bool bLimitKpts = false;
-    bool bVis = false; // visualize results
+    bool bLimitKpts = false;                      // limit keypoints matching to 50
+    bool bVis = true;                             // visualize results frame by frame
 
     // Initialization COUT
     cout << " --- INITIALIZATION DATA ---" << endl;
@@ -99,7 +99,7 @@ int main(int argc, const char *argv[])
         }
 
         //// EOF STUDENT ASSIGNMENT
-        // cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -185,7 +185,7 @@ int main(int argc, const char *argv[])
 
         // push keypoints and descriptor for current frame to end of data buffer
         (dataBuffer.end() - 1)->keypoints = keypoints;
-        // cout << "#2 : DETECT KEYPOINTS done" << endl;
+        cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
@@ -199,8 +199,7 @@ int main(int argc, const char *argv[])
 
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;
-
-        // cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
+        cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
@@ -222,8 +221,7 @@ int main(int argc, const char *argv[])
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
             numMatchesVec.push_back(matches.size());
-
-            // cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
 
@@ -242,7 +240,7 @@ int main(int argc, const char *argv[])
                 // cout << "**PRESS ANY KEYS TO CONTINUE TO NEXT IMAGE!**" << endl;
                 cv::waitKey(0); // wait for key to be pressed
             }
-            bVis = false;
+            // bVis = false;
         }
 
         cout << endl;
