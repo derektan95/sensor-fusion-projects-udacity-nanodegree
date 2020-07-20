@@ -32,11 +32,11 @@ int main(int argc, const char *argv[])
 
     // camera
     string imgBasePath = dataPath + "images/";
-    string imgPrefix = "KITTI/2011_09_26/image_02/data/000000"; // left camera, color
+    string imgPrefix = "KITTI/2011_09_26/image_02/data/000000"; // left camera, colored version of img
     string imgFileType = ".png";
     int imgStartIndex = 0; // first file index to load (assumes Lidar and camera names have identical naming convention)
     int imgEndIndex = 18;   // last file index to load
-    int imgStepWidth = 1; 
+    int imgStepWidth = 1; // Used to adjust framerate
     int imgFillWidth = 4;  // no. of digits which make up the file index (e.g. img-0001.png)
 
     // object detection
@@ -49,7 +49,7 @@ int main(int argc, const char *argv[])
     string lidarPrefix = "KITTI/2011_09_26/velodyne_points/data/000000";
     string lidarFileType = ".bin";
 
-    // calibration data for camera and lidar
+    // calibration data for camera and lidar - for Stereo setup
     cv::Mat P_rect_00(3,4,cv::DataType<double>::type); // 3x4 projection matrix after rectification
     cv::Mat R_rect_00(4,4,cv::DataType<double>::type); // 3x3 rectifying rotation to make image planes co-planar
     cv::Mat RT(4,4,cv::DataType<double>::type); // rotation matrix and translation vector
@@ -86,7 +86,8 @@ int main(int argc, const char *argv[])
         string imgFullFilename = imgBasePath + imgPrefix + imgNumber.str() + imgFileType;
 
         // load image from file 
-        cv::Mat img = cv::imread(imgFullFilename);
+        // YOLO trained with colored images - don't convert to grayscale yet!
+        cv::Mat img = cv::imread(imgFullFilename);          
 
         // push image into data frame buffer
         DataFrame frame;
@@ -113,7 +114,7 @@ int main(int argc, const char *argv[])
         std::vector<LidarPoint> lidarPoints;
         loadLidarFromFile(lidarPoints, lidarFullFilename);
 
-        // remove Lidar points based on distance properties
+        // remove Lidar points based on distance properties - Don't care about obstacles from other lanes (yet)
         float minZ = -1.5, maxZ = -0.9, minX = 2.0, maxX = 20.0, maxY = 2.0, minR = 0.1; // focus on ego lane
         cropLidarPoints(lidarPoints, minX, maxX, maxY, minZ, maxZ, minR);
     
