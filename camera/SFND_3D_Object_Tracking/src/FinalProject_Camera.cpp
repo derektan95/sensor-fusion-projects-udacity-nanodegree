@@ -34,9 +34,9 @@ int main(int argc, const char *argv[])
     string matcherType = "MAT_BF";                // MAT_BF, MAT_FLANN
     string descriptorCategoryType = "DES_BINARY"; // DES_BINARY, DES_HOG
     string selectorType = "SEL_KNN";              // SEL_NN, SEL_KNN
-    bool bLimitKpts = true;                      // limit keypoints matching to 50
+    bool bLimitKpts = false;                      // limit keypoints matching to 50
     bool turnOnYDetectionVisualizerYOLO = false;     // visualizes bounding boxes using YOLO detection framework
-    bool turnOnBoundingBoxPointCloudVisualizer = false;      // Visualizes point cloud that is separated by bounding boxes
+    bool turnOnTopDownBoundingBoxPointCloudVisualizer = false;      // Visualizes point cloud that is separated by bounding boxes
     bool showKeypointMatching = false;              // visualize keypoint matching results frame by frame
     bool turnOnFinalTTCVisualizer = true;
 
@@ -52,6 +52,10 @@ int main(int argc, const char *argv[])
     cout << " --- " << endl
          << endl;
 
+    // Output Vectors 
+    vector<double> lidarVecTTC;
+    vector<double> cameraVecTTC;
+    
     // data location
     string dataPath = "../";
 
@@ -118,6 +122,12 @@ int main(int argc, const char *argv[])
         frame.cameraImg = img;
         dataBuffer.push_back(frame);
 
+        // Remove first element the moment size of dataBuffer exceeds dataBufferSize threshold
+        if (dataBuffer.size() > dataBufferSize)
+        {
+            dataBuffer.erase(dataBuffer.begin());
+        }
+
         cout << endl;
         cout << "---" << endl;
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
@@ -156,7 +166,7 @@ int main(int argc, const char *argv[])
         clusterLidarWithROI((dataBuffer.end()-1)->boundingBoxes, (dataBuffer.end() - 1)->lidarPoints, shrinkFactor, P_rect_00, R_rect_00, RT);
 
         // Visualize 3D objects
-        if(turnOnBoundingBoxPointCloudVisualizer)
+        if(turnOnTopDownBoundingBoxPointCloudVisualizer)
         {
             show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(2000, 2000), true);
         }
@@ -260,6 +270,7 @@ int main(int argc, const char *argv[])
 
             //// STUDENT ASSIGNMENT
             //// TASK FP.1 -> match list of 3D objects (vector<BoundingBox>) between current and previous frame (implement ->matchBoundingBoxes)
+            // For LiDAR TTC calculations
             map<int, int> bbBestMatches;
             matchBoundingBoxes(matches, bbBestMatches, *(dataBuffer.end()-2), *(dataBuffer.end()-1)); // associate bounding boxes between current and previous frame using keypoint matches
             //// EOF STUDENT ASSIGNMENT
@@ -310,8 +321,9 @@ int main(int argc, const char *argv[])
                     }
                 }
 
-                // compute TTC for current match
-                if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) // only compute TTC if we have Lidar points
+                // compute TTC for current match - only compute TTC if we have Lidar points
+                // At this stage, we only have lidar points of car ahead of Ego Car.
+                if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) 
                 {
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.2 -> compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
@@ -326,6 +338,10 @@ int main(int argc, const char *argv[])
                     clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
                     computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
                     //// EOF STUDENT ASSIGNMENT
+
+                    // Data Logging
+                    lidarVecTTC.push_back(ttcLidar);
+                    cameraVecTTC.push_back(ttcCamera);
 
                     if (turnOnFinalTTCVisualizer)
                     {
@@ -350,6 +366,27 @@ int main(int argc, const char *argv[])
         }
 
     } // eof loop over all images
+
+
+
+    // Output results for logging into spreadsheet
+    cout << endl
+         << endl;
+    cout << "TTC (Camera): " << endl;
+    for (double cameraTTC : cameraVecTTC)
+    {
+        cout << cameraTTC << ", ";
+    }
+
+    cout << endl
+         << endl;
+    cout << "TTC (LiDAR): " << endl;
+    for (double lidarTTC : lidarVecTTC)
+    {
+        cout << lidarTTC << ", ";
+    }
+    cout << endl
+         << endl;
 
     return 0;
 }

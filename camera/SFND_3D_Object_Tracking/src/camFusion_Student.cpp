@@ -134,7 +134,50 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
+    double maxDistanceFromEuclideanMean = 150;
+    vector<double> matchDistanceVec;
+    std::vector<cv::DMatch> matchesWithinBox;
+    std::vector<cv::KeyPoint> keypointsWithinBox;
+    
+    // Obtain meanMatchDistance (to remove outliers later on)
+    for (auto it1 = kptMatches.begin(); it1 != kptMatches.end() - 1; ++it1)
+    { // outer kpt. loop
+
+        // get current keypoint and its matched partner in the prev. frame
+        cv::KeyPoint kpCurr = kptsCurr.at(it1->trainIdx);
+        cv::KeyPoint kpPrev = kptsPrev.at(it1->queryIdx);
+
+        double distKpPrevVsCurr = sqrt( pow((kpCurr.pt.x-kpPrev.pt.x), 2) + pow ((kpCurr.pt.y-kpPrev.pt.y), 2));
+        matchDistanceVec.push_back(distKpPrevVsCurr);
+    }
+
+    double meanMatchDistance = std::accumulate(matchDistanceVec.begin(), matchDistanceVec.end(), 0.0) / matchDistanceVec.size();
+
+    // Actual filtering 
+    for (auto it1 = kptMatches.begin(); it1 != kptMatches.end() - 1; ++it1)
+    { 
+
+        // get current keypoint and its matched partner in the prev. frame
+        cv::KeyPoint kpCurr = kptsCurr.at(it1->trainIdx);
+        cv::KeyPoint kpPrev = kptsPrev.at(it1->queryIdx);
+
+        double distKpPrevVsCurr = sqrt( pow((kpCurr.pt.x-kpPrev.pt.x), 2) + pow ((kpCurr.pt.y-kpPrev.pt.y), 2));
+
+        // if point is within bounding box
+        // Remove outlier by making sure euclidean dist between matched keypoints is not exceeding meanMatchDistance by threshold 
+        if (distKpPrevVsCurr - meanMatchDistance < maxDistanceFromEuclideanMean && 
+            boundingBox.roi.contains(kpCurr.pt))
+        {
+            matchesWithinBox.push_back(*it1);
+            keypointsWithinBox.push_back(kpCurr);
+        }
+        
+    }
+
+    boundingBox.kptMatches = matchesWithinBox;
+    boundingBox.keypoints = keypointsWithinBox;
+
+
 }
 
 
@@ -142,7 +185,62 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
 {
-    // ...
+    // compute distance ratios between all matched keypoints
+    vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame
+    for (auto it1 = kptMatches.begin(); it1 != kptMatches.end() - 1; ++it1)
+    { // outer kpt. loop
+
+        // get current keypoint and its matched partner in the prev. frame
+        cv::KeyPoint kpOuterCurr = kptsCurr.at(it1->trainIdx);
+        cv::KeyPoint kpOuterPrev = kptsPrev.at(it1->queryIdx);
+
+        for (auto it2 = kptMatches.begin() + 1; it2 != kptMatches.end(); ++it2)
+        { // inner kpt.-loop
+
+            // min. required distance - so that we select matches between points that are more spreaded out
+            double minDist = 100.0; 
+
+            // get next keypoint and its matched partner in the prev. frame
+            cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
+            cv::KeyPoint kpInnerPrev = kptsPrev.at(it2->queryIdx);
+
+            // compute distances and distance ratios
+            double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
+            double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
+
+            // avoid division by zero
+            if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist)
+            { 
+
+                double distRatio = distCurr / distPrev;
+                distRatios.push_back(distRatio);
+            }
+        } // eof inner loop over all matched kpts
+    }     // eof outer loop over all matched kpts
+
+    // only continue if list of distance ratios is not empty
+    if (distRatios.size() == 0)
+    {
+        TTC = NAN;
+        return;
+    }
+
+
+    // STUDENT TASK (replacement for meanDistRatio)
+    std::sort(distRatios.begin(), distRatios.end());
+    double medianDistRatioIdx = floor(distRatios.size() / 2.0);
+    double medianDistRatio = 0;
+    if (distRatios.size() % 2 == 0)
+    {
+        medianDistRatio = (distRatios[medianDistRatioIdx - 1] + distRatios[medianDistRatioIdx]) / 2.0;
+    }
+    else
+    {
+        medianDistRatio = distRatios[medianDistRatioIdx];
+    }
+
+    double dT = 1 / frameRate;
+    TTC = -dT / (1 - medianDistRatio);
 }
 
 
