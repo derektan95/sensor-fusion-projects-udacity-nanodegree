@@ -146,10 +146,64 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
 }
 
 
+// Computing Time to Collsion using Lidar data by evaluating Median Point of point cloud cluster of preceeding vehicle.
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
-    // ...
+    // auxiliary variables
+    double dT = 1 / frameRate;        // time between two measurements in seconds
+
+    // Picking median point to avoid outlier (of point being too close to egocar)
+    double medianXPrev = 1e9, medianXCurr = 1e9;
+    vector<double> xPrevVec, xCurrVec;
+    for (auto it = lidarPointsPrev.begin(); it != lidarPointsPrev.end(); ++it)
+    {
+        // minXPrev = (minXPrev > it->x) ? it->x : minXPrev;
+        xPrevVec.push_back(it->x);
+    }
+
+    for (auto it = lidarPointsCurr.begin(); it != lidarPointsCurr.end(); ++it)
+    {
+        // minXCurr = (minXCurr > it->x)  ? it->x : minXCurr;
+        xCurrVec.push_back(it->x);
+    }
+    sort(xPrevVec.begin(), xPrevVec.end());
+    sort(xCurrVec.begin(), xCurrVec.end());
+
+    // compute TTC from both measurements
+    double medianDistIdxPrev = floor(xPrevVec.size() / 2.0);
+    double medianDistPrev = 0;
+    if (xPrevVec.size() % 2 == 0) 
+        medianDistPrev = (xPrevVec[medianDistIdxPrev - 1] + xPrevVec[medianDistIdxPrev]) / 2.0;
+    else
+        medianDistPrev = xPrevVec[medianDistIdxPrev];
+
+    double medianDistIdxCurr = floor(xCurrVec.size() / 2.0);
+    double medianDistCurr = 0;
+    if (xCurrVec.size() % 2 == 0) 
+        medianDistCurr = (xCurrVec[medianDistIdxCurr - 1] + xCurrVec[medianDistIdxCurr]) / 2.0;
+    else
+        medianDistCurr = xCurrVec[medianDistIdxCurr];
+
+
+    TTC = medianDistCurr * dT / (medianDistPrev - medianDistCurr);
+
+
+
+    // // find closest distance to Lidar points within ego lane
+    // double minXPrev = 1e9, minXCurr = 1e9;
+    // for (auto it = lidarPointsPrev.begin(); it != lidarPointsPrev.end(); ++it)
+    // {
+    //     minXPrev = (minXPrev > it->x) ? it->x : minXPrev;
+    // }
+
+    // for (auto it = lidarPointsCurr.begin(); it != lidarPointsCurr.end(); ++it)
+    // {
+    //     minXCurr = (minXCurr > it->x)  ? it->x : minXCurr;
+    // }
+
+    // // compute TTC from both measurements
+    // TTC = minXCurr * dT / (minXPrev - minXCurr);
 }
 
 

@@ -36,8 +36,8 @@ int main(int argc, const char *argv[])
     string selectorType = "SEL_KNN";              // SEL_NN, SEL_KNN
     bool bLimitKpts = true;                      // limit keypoints matching to 50
     bool turnOnYDetectionVisualizerYOLO = false;     // visualizes bounding boxes using YOLO detection framework
-    bool turnOnBoundingBoxPointCloudVisualizer = true;      // Visualizes point cloud that is separated by bounding boxes
-    bool showKeypointMatching = true;              // visualize keypoint matching results frame by frame
+    bool turnOnBoundingBoxPointCloudVisualizer = false;      // Visualizes point cloud that is separated by bounding boxes
+    bool showKeypointMatching = false;              // visualize keypoint matching results frame by frame
     bool turnOnFinalTTCVisualizer = true;
 
     // Initialization COUT
@@ -289,7 +289,7 @@ int main(int argc, const char *argv[])
 
             /* COMPUTE TTC ON OBJECT IN FRONT */
 
-            // loop over all BB match pairs to find previous and current Bounding Box
+            // loop over all BB match pairs to find each matched Bounding Boxes in previousFrame and currentFrame
             for (auto it1 = (dataBuffer.end() - 1)->bbMatches.begin(); it1 != (dataBuffer.end() - 1)->bbMatches.end(); ++it1)
             {
                 // find bounding boxes associates with current match
