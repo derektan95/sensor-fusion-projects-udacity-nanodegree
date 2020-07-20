@@ -155,5 +155,71 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-    // ...
+    // 2D vector tracking bounding box matches for each keypoint match - filled with 0s
+    // row = prevFrame, col = currFrame
+    vector<vector<int>> boundingBoxMatches(prevFrame.boundingBoxes.size(), vector<int>(currFrame.boundingBoxes.size(), 0));
+
+    // iterate through each match
+    for (auto &match : matches)
+    {
+        // queryIdx vs trainIdx: https://stackoverflow.com/questions/13318853/opencv-drawmatches-queryidx-and-trainidx/13320083#13320083
+        cv::KeyPoint prevKeypoint = prevFrame.keypoints[match.queryIdx];
+        cv::KeyPoint currKeypoint = currFrame.keypoints[match.trainIdx];
+
+        // Consolidate bounding boxes IDs that prev keypoint is in
+        vector<int> prevBB_matchesIds;
+        for (auto &prevFrameBB : prevFrame.boundingBoxes)
+        {
+
+            // check whether point is within current bounding box
+            if (prevFrameBB.roi.contains(prevKeypoint.pt))
+            {
+                prevBB_matchesIds.push_back(prevFrameBB.boxID);
+            }
+        }
+
+        // Consolidate bounding boxes IDs that current keypoint is in
+        vector<int> currBB_matchesIds;
+        for (auto &currFrameBB : currFrame.boundingBoxes)
+        {
+
+            // check whether point is within current bounding box
+            if (currFrameBB.roi.contains(currKeypoint.pt))
+            {
+                currBB_matchesIds.push_back(currFrameBB.boxID);
+            }
+        }
+
+
+        // Update BB_table with keypoint matches
+        for (int prevBB_id : prevBB_matchesIds)
+        {
+            for (int currBB_id : currBB_matchesIds)
+            {
+                boundingBoxMatches[prevBB_id][currBB_id]++;
+            }
+        }
+
+    }
+
+    // Select BB matches based on hightest number from each row...
+    for (size_t i = 0; i < boundingBoxMatches.size(); i++)
+    {
+        
+        int highestMatches = -1;
+        int highestMatchesIdx = -1;
+        for (size_t j = 0; j < boundingBoxMatches[i].size(); j++)
+        {
+            if (boundingBoxMatches[i][j] > highestMatches)
+            {
+                highestMatches = boundingBoxMatches[i][j];
+                highestMatchesIdx = j;
+            }
+        
+        // Insert pair of prev-to-curr Bounding Box ID match (highest)
+        bbBestMatches[i] = highestMatchesIdx;
+        }
+        
+    }
 }
+

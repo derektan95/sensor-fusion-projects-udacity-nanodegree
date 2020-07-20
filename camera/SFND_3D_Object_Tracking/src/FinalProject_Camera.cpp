@@ -141,7 +141,7 @@ int main(int argc, const char *argv[])
         
         
         // REMOVE THIS LINE BEFORE PROCEEDING WITH THE FINAL PROJECT
-        continue; // skips directly to the next image without processing what comes beneath
+        // continue; // skips directly to the next image without processing what comes beneath
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -230,7 +230,7 @@ int main(int argc, const char *argv[])
 
             /* COMPUTE TTC ON OBJECT IN FRONT */
 
-            // loop over all BB match pairs
+            // loop over all BB match pairs to find previous and current Bounding Box
             for (auto it1 = (dataBuffer.end() - 1)->bbMatches.begin(); it1 != (dataBuffer.end() - 1)->bbMatches.end(); ++it1)
             {
                 // find bounding boxes associates with current match
