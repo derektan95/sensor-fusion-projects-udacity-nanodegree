@@ -28,7 +28,7 @@ T = 12;
 G = 4;      
 
 % Offset : Adding room above noise threshold for desired SNR 
-offset=5;
+offset = 6;
 
 % Vector to hold threshold values 
 threshold_cfar = [];
