@@ -23,6 +23,11 @@ The main principles taught in this segment are:
 
 **Radar Segment**<br/>
 The main principles taught in this segment are: 
+1) Radar Principles
+2) Using Fast-Fourier Transform to obtain Range (Distance) and Doppler (Velocity) information
+3) Removing clutter (noise), using Cell Averaging Constant Fast Alarm Rate (CA-CFAR)
+4) Clustering and Tracking of Radar points
+5) Simulation on Matlab
 
 **Kalman Filter Segment**<br/>
 The main principles taught in this segment are: 
