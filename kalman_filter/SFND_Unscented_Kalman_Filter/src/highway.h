@@ -22,12 +22,12 @@ public:
 	// Set which cars to track with UKF
 	std::vector<bool> trackCars = {true,true,true};
 	// Visualize sensor measurements
-	bool visualize_lidar = true;
-	bool visualize_radar = true;
+	bool visualize_lidar = false;
+	bool visualize_radar = false;
 	bool visualize_pcd = false;
 	// Predict path in the future using UKF
-	double projectedTime = 0;
-	int projectedSteps = 0;
+	double projectedTime = 2;
+	int projectedSteps = 6;
 	// --------------------------------
 
 	Highway(pcl::visualization::PCLVisualizer::Ptr& viewer)

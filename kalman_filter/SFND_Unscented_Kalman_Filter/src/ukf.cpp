@@ -23,10 +23,10 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 30;
+  std_a_ = 2;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 30;
+  std_yawdd_ = 2;
   
   /**
    * DO NOT MODIFY measurement noise values below.
@@ -84,6 +84,11 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_ << x_lidar, y_lidar, 0, 0, 0;
 
       P_ = MatrixXd::Identity(5, 5);
+      P_(0,0) = std_laspx_;
+      P_(1,1) = std_laspx_;
+      P_(2,2) = std_laspx_;
+      P_(3,3) = std_laspx_;
+      P_(4,4) = std_laspx_;
 
       time_us_ = meas_package.timestamp_;
 
@@ -98,6 +103,11 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_ << rho, phi, 0, 0, 0;
 
       P_ = MatrixXd::Identity(5, 5);
+      P_(0,0) = std_laspx_;
+      P_(1,1) = std_laspx_;
+      P_(2,2) = std_laspx_;
+      P_(3,3) = std_laspx_;
+      P_(4,4) = std_laspx_;
 
       time_us_ = meas_package.timestamp_;
       
@@ -161,7 +171,27 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
    * You can also calculate the lidar NIS, if desired.
    */
 
-  
+  // measurement matrix
+  MatrixXd H_ = MatrixXd(2, 5);
+  H_ << 1, 0, 0, 0, 0,
+        0, 1, 0, 0, 0;
+  MatrixXd R_ = MatrixXd(2, 2);
+  R_ << (std_laspx_*std_laspx_), 0,
+        0, (std_laspy_*std_laspy_);
+
+  VectorXd z_pred = H_ * x_;
+  VectorXd y = meas_package.raw_measurements_ - z_pred;
+  MatrixXd Ht = H_.transpose();
+  MatrixXd S = H_ * P_ * Ht + R_;
+  MatrixXd Si = S.inverse();
+  MatrixXd PHt = P_ * Ht;
+  MatrixXd K = PHt * Si;
+
+  //new estimate
+  x_ = x_ + (K * y);
+  long x_size = x_.size();
+  MatrixXd I = MatrixXd::Identity(x_size, x_size);
+  P_ = (I - K * H_) * P_;
 
 
   // cout << "Completed Lidar Update Step" << endl;
