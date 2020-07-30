@@ -45,9 +45,13 @@ class UKF {
   void UpdateRadar(MeasurementPackage meas_package);
 
   // Other helper functions....
+  //PREDICTION STAGE
   MatrixXd GenerateAugmentedSigmaPoints();
   void PredictNewSigmaPoints(const MatrixXd &Xsig_aug, double delta_t);
   void CalculatePredictedStateAndCovariance();
+  //UPDATE STAGE
+  void UpdateNewSigmaPointsRadar(MatrixXd &Z_sigma_pts, VectorXd &z_output, MatrixXd &S_output);
+  void CompleteUpdateStepRadar(const MatrixXd &Zsig, const VectorXd &z_pred, const MatrixXd &S, const VectorXd &z_meas);
 
   // initially set to false, set to true in first call of ProcessMeasurement
   bool is_initialized_;
