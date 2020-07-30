@@ -72,6 +72,49 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
    * TODO: Complete this function! Make sure you switch between lidar and radar
    * measurements.
    */
+
+  // If first reading...
+  if (!is_initialized_)
+  {
+    if (meas_package.sensor_type_ == MeasurementPackage::LASER)
+    {
+      // Initialize State Vector x_
+      double x_lidar = meas_package.raw_measurements_(0,0);
+      double y_lidar = meas_package.raw_measurements_(1,0);
+      x_ << x_lidar, y_lidar, 0, 0, 0;
+
+      P_ = MatrixXd::Identity(5, 5);
+
+      time_us_ = meas_package.timestamp_;
+
+      is_initialized_ = true;
+      std::cout << "INTIIALIZED X STATE VECTOR USING LIDAR MEASUREMENTS" << std::endl;
+    }
+    else if (meas_package.sensor_type_ == MeasurementPackage::RADAR)
+    {
+      // Initialize State Vector x_
+      double rho = meas_package.raw_measurements_(0,0);
+      double phi = meas_package.raw_measurements_(1,0);
+      x_ << rho, phi, 0, 0, 0;
+
+      P_ = MatrixXd::Identity(5, 5);
+
+      time_us_ = meas_package.timestamp_;
+      
+      is_initialized_ = true;
+    }
+    else
+    {
+      std::cout << "UNIDENTIFIED SENSOR TYPE" << std::endl;
+    }    
+  }
+
+  // Prediction Step
+  float dt = (meas_package.timestamp_ - time_us_) / 1000000.0;
+  time_us_ = meas_package.timestamp_;
+  Prediction(dt);
+
+  // Update Step
   if (meas_package.sensor_type_ == MeasurementPackage::LASER)
   {
     UpdateLidar(meas_package);
@@ -105,7 +148,7 @@ void UKF::Prediction(double delta_t) {
   // Update x_ and P_ with predicted values temporarily for Update use.
   CalculatePredictedStateAndCovariance();
 
-
+  // cout << "Completed Prediction Step" << endl;
 }
 
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
@@ -116,19 +159,10 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
    * You can also calculate the lidar NIS, if desired.
    */
 
-  // If first reading...
-  if (!is_initialized_)
-  {
-    // Initialize State Vector x_
-    double x_lidar = meas_package.raw_measurements_(0,0);
-    double y_lidar = meas_package.raw_measurements_(1,0);
-    x_ << x_lidar, y_lidar, 0, 0, 0;
+  
 
-    P_ = MatrixXd::Identity(5, 5);
 
-    is_initialized_ = true;
-    std::cout << "INTIIALIZED X STATE VECTOR USING LIDAR MEASUREMENTS" << std::endl;
-  }
+  // cout << "Completed Lidar Update Step" << endl;
   
 }
 
@@ -140,19 +174,12 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
    * You can also calculate the radar NIS, if desired.
    */
 
-  // If first reading...
-  if (!is_initialized_)
-  {
-    // Initialize State Vector x_
-    double rho = meas_package.raw_measurements_(0,0);
-    double phi = meas_package.raw_measurements_(1,0);
-    x_ << rho, phi, 0, 0, 0;
+  
 
-    P_ = MatrixXd::Identity(5, 5);
-    
-    is_initialized_ = true;
-    std::cout << "INTIIALIZED X STATE VECTOR USING RADAR MEASUREMENTS" << std::endl;
-  }
+
+
+
+  // cout << "Completed Radar Update Step" << endl;
 
   
 }
