@@ -4,6 +4,9 @@
 #include "Eigen/Dense"
 #include "measurement_package.h"
 
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+
 class UKF {
  public:
   /**
@@ -41,6 +44,10 @@ class UKF {
    */
   void UpdateRadar(MeasurementPackage meas_package);
 
+  // Other helper functions....
+  MatrixXd GenerateAugmentedSigmaPoints();
+  void PredictNewSigmaPoints(const MatrixXd &Xsig_aug, double delta_t);
+  void CalculatePredictedStateAndCovariance();
 
   // initially set to false, set to true in first call of ProcessMeasurement
   bool is_initialized_;
