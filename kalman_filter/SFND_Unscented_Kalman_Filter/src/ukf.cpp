@@ -1,8 +1,10 @@
 #include "ukf.h"
 #include "Eigen/Dense"
+#include<iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using namespace std;
 
 /**
  * Initializes Unscented Kalman filter
@@ -54,6 +56,13 @@ UKF::UKF() {
    * TODO: Complete the initialization. See ukf.h for other member properties.
    * Hint: one or more values initialized above might be wildly off...
    */
+
+  // Initialize class variables
+  n_x_ = 5;
+  n_aug_ = n_x_ + 2;
+  lambda_ = 3 - n_x_;
+
+
 }
 
 UKF::~UKF() {}
@@ -63,6 +72,20 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
    * TODO: Complete this function! Make sure you switch between lidar and radar
    * measurements.
    */
+  if (meas_package.sensor_type_ == MeasurementPackage::LASER)
+  {
+    UpdateLidar(meas_package);
+  }
+  else if (meas_package.sensor_type_ == MeasurementPackage::RADAR)
+  {
+    UpdateRadar(meas_package);
+  }
+  else
+  {
+    cout << "UNIDENTIFIED SENSOR TYPE" << endl;
+  }
+  
+  
 }
 
 void UKF::Prediction(double delta_t) {
@@ -71,6 +94,8 @@ void UKF::Prediction(double delta_t) {
    * Modify the state vector, x_. Predict sigma points, the state, 
    * and the state covariance matrix.
    */
+
+  
 }
 
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
@@ -80,6 +105,21 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
    * covariance, P_.
    * You can also calculate the lidar NIS, if desired.
    */
+
+  // If first reading...
+  if (!is_initialized_)
+  {
+    // Initialize State Vector x_
+    double x_lidar = meas_package.raw_measurements_(0,0);
+    double y_lidar = meas_package.raw_measurements_(1,0);
+    x_ << x_lidar, y_lidar, 0, 0, 0;
+
+    P_ = MatrixXd::Identity(5, 5);
+
+    is_initialized_ = true;
+    cout << "INTIIALIZED X STATE VECTOR USING LIDAR MEASUREMENTS" << endl;
+  }
+  
 }
 
 void UKF::UpdateRadar(MeasurementPackage meas_package) {
@@ -89,4 +129,18 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
    * covariance, P_.
    * You can also calculate the radar NIS, if desired.
    */
+
+  // If first reading...
+  if (!is_initialized_)
+  {
+    // Initialize State Vector x_
+    double rho = meas_package.raw_measurements_(0,0);
+    double phi = meas_package.raw_measurements_(1,0);
+    x_ << rho, phi, 0, 0, 0;
+
+    P_ = MatrixXd::Identity(5, 5);
+    
+    is_initialized_ = true;
+    cout << "INTIIALIZED X STATE VECTOR USING RADAR MEASUREMENTS" << endl;
+  }
 }
