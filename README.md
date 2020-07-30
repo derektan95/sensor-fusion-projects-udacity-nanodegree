@@ -31,3 +31,6 @@ The main principles taught in this segment are:
 
 **Kalman Filter Segment**<br/>
 The main principles taught in this segment are: 
+1) Normal Kalman Filter (1D)
+2) Extended Kalman Filter (2D)
+3) Unscented Kalman Filter (2D)

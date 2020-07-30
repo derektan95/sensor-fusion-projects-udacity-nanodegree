@@ -67,13 +67,14 @@ UKF::UKF() {
 
 UKF::~UKF() {}
 
+// Perform Kalman Filter Process on information package
 void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   /**
    * TODO: Complete this function! Make sure you switch between lidar and radar
    * measurements.
    */
 
-  // If first reading...
+  // If first reading, initialize X, P and other important matrices
   if (!is_initialized_)
   {
     if (meas_package.sensor_type_ == MeasurementPackage::LASER)
@@ -84,13 +85,21 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_ << x_lidar, y_lidar, 0, 0, 0;
 
       P_ = MatrixXd::Identity(5, 5);
-      P_(0,0) = std_laspx_;
-      P_(1,1) = std_laspx_;
-      P_(2,2) = std_laspx_;
-      P_(3,3) = std_laspx_;
-      P_(4,4) = std_laspx_;
+      P_(0,0) = std_laspx_*std_laspx_;    // Certain
+      P_(1,1) = std_laspx_*std_laspx_;    // Certain
+      P_(2,2) = 100;                      // Not very certain - derived value
+      P_(3,3) = 100;                      // Not very certain - derived value
+      P_(4,4) = 100;                      // Not very certain - derived value
 
       time_us_ = meas_package.timestamp_;
+
+      // set weights
+      double weight_0 = lambda_/(lambda_+n_aug_);
+      weights_(0) = weight_0;
+      for (int i=1; i<2*n_aug_+1; ++i) {  // 2n+1 weights
+        double weight = 0.5/(n_aug_+lambda_);
+        weights_(i) = weight;
+      }
 
       is_initialized_ = true;
       std::cout << "INTIIALIZED X STATE VECTOR USING LIDAR MEASUREMENTS" << std::endl;
@@ -103,13 +112,21 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_ << rho, phi, 0, 0, 0;
 
       P_ = MatrixXd::Identity(5, 5);
-      P_(0,0) = std_laspx_;
-      P_(1,1) = std_laspx_;
-      P_(2,2) = std_laspx_;
-      P_(3,3) = std_laspx_;
-      P_(4,4) = std_laspx_;
+      P_(0,0) = std_laspx_*std_laspx_;    // Certain
+      P_(1,1) = std_laspx_*std_laspx_;    // Certain
+      P_(2,2) = 100;                      // Not very certain - derived value
+      P_(3,3) = 100;                      // Not very certain - derived value
+      P_(4,4) = 100;                      // Not very certain - derived value
 
       time_us_ = meas_package.timestamp_;
+
+      // set weights
+      double weight_0 = lambda_/(lambda_+n_aug_);
+      weights_(0) = weight_0;
+      for (int i=1; i<2*n_aug_+1; ++i) {  // 2n+1 weights
+        double weight = 0.5/(n_aug_+lambda_);
+        weights_(i) = weight;
+      }
       
       is_initialized_ = true;
     }
@@ -143,6 +160,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   
 }
 
+// Summary for Prediction Step
 void UKF::Prediction(double delta_t) {
   /**
    * TODO: Complete this function! Estimate the object's location. 
@@ -159,10 +177,9 @@ void UKF::Prediction(double delta_t) {
   // Calculate new Predicted Mean and Covariance using new Sigma Points
   // Update x_ and P_ with predicted values temporarily for Update use.
   CalculatePredictedStateAndCovariance();
-
-  // cout << "Completed Prediction Step" << endl;
 }
 
+// Summary for Update Step - Lidar
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
   /**
    * TODO: Complete this function! Use lidar data to update the belief 
@@ -192,12 +209,10 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
-
-
-  // cout << "Completed Lidar Update Step" << endl;
   
 }
 
+// Summary for Update Step - Radar
 void UKF::UpdateRadar(MeasurementPackage meas_package) {
   /**
    * TODO: Complete this function! Use radar data to update the belief 
@@ -215,7 +230,6 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   VectorXd z_meas = meas_package.raw_measurements_;
   CompleteUpdateStepRadar(Z_sigma_pts, z_predicted, S_output, z_meas);
 
-  // cout << "Completed Radar Update Step" << endl;  
 }
 
 
@@ -224,6 +238,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
 // --- PREDICTION STAGE 
 
+// Generate Sigma Points from Augmented State to factor in Process Noise when mapping through f(x) nonlinear function
 MatrixXd UKF::GenerateAugmentedSigmaPoints() 
 {
 
@@ -319,7 +334,7 @@ void UKF::PredictNewSigmaPoints(const MatrixXd &Xsig_aug, double delta_t)
 
 }
 
-
+// Calculate Predicted Mean and Covariance from new sigma points
 void UKF::CalculatePredictedStateAndCovariance()
 {
 
@@ -328,14 +343,6 @@ void UKF::CalculatePredictedStateAndCovariance()
 
   // create covariance matrix for prediction
   MatrixXd P = MatrixXd(n_x_, n_x_);
-  
-  // set weights - CAN SET DURING INITIALIZATION TOO
-  double weight_0 = lambda_/(lambda_+n_aug_);
-  weights_(0) = weight_0;
-  for (int i=1; i<2*n_aug_+1; ++i) {  // 2n+1 weights
-    double weight = 0.5/(n_aug_+lambda_);
-    weights_(i) = weight;
-  }
 
   // predicted state mean
   x.fill(0.0);
@@ -365,6 +372,7 @@ void UKF::CalculatePredictedStateAndCovariance()
 
 // --- UPDATE STAGE 
 
+// Pass Old Sigma Points representing new predicted X matrix through nonlinear h(x) function
 void UKF::UpdateNewSigmaPointsRadar(MatrixXd &Z_sigma_pts, VectorXd &z_pred_mean, MatrixXd &S_output)
 {
 
@@ -379,14 +387,6 @@ void UKF::UpdateNewSigmaPointsRadar(MatrixXd &Z_sigma_pts, VectorXd &z_pred_mean
   
   // measurement covariance matrix S
   MatrixXd S = MatrixXd(n_z,n_z);
-  
-  // set weights - CAN SET DURING INITIALIZATION TOO
-  double weight_0 = lambda_/(lambda_+n_aug_);
-  weights_(0) = weight_0;
-  for (int i=1; i<2*n_aug_+1; ++i) {  // 2n+1 weights
-    double weight = 0.5/(n_aug_+lambda_);
-    weights_(i) = weight;
-  }
 
   // transform sigma points into measurement space
   for (int i = 0; i < 2 * n_aug_ + 1; ++i) {  // 2n+1 simga points
@@ -439,7 +439,7 @@ void UKF::UpdateNewSigmaPointsRadar(MatrixXd &Z_sigma_pts, VectorXd &z_pred_mean
 }
 
 
-
+// Compute Kalman Gain to eventually calculate new X and P state matrices
 void UKF::CompleteUpdateStepRadar(const MatrixXd &Zsig, const VectorXd &z_pred, const MatrixXd &S, const VectorXd &z_meas)
 {
 
