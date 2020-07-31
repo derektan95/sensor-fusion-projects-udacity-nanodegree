@@ -1,4 +1,4 @@
-# Tutorial for Sensor Fusion Nanodegree - Udacity Course
+# Sensor Fusion for Autonomous Vehicles Nanodegree - Udacity
 
 **Disclaimer** Udacity provided some starter code, but the implementation for these concepts are done by myself. Please contact derektan95@hotmail.com for any questions. 
 
