@@ -113,7 +113,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer, ProcessPointCloud
     bool render_box = true;
 
     // HYPER PARAMETERS
-    Eigen::Vector4f boxFilterMin = {-15.0f, -6.0f, -5.0f, 1};
+    Eigen::Vector4f boxFilterMin = {-10.0f, -6.0f, -5.0f, 1};
     Eigen::Vector4f boxFilterMax = {35.0f, 7.0f, 5.0f, 1};
     int segmentationMaxIterations = 20;
     float segmentationDistThreshold = 0.2;
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
     std::cout << "starting enviroment" << std::endl;
 
     pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-    CameraAngle setAngle = FPS;
+    CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
 
     // simpleHighway(viewer);

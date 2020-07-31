@@ -35,10 +35,11 @@ int main(int argc, const char *argv[])
     string descriptorCategoryType = "DES_BINARY"; // DES_BINARY, DES_HOG
     string selectorType = "SEL_KNN";              // SEL_NN, SEL_KNN
     bool bLimitKpts = false;                      // limit keypoints matching to 50
+    bool limitKptsPreceedingVehicle = true;        // limit keypoints to only within box of preceeding vehicle
     bool turnOnYDetectionVisualizerYOLO = false;     // visualizes bounding boxes using YOLO detection framework
     bool turnOnTopDownBoundingBoxPointCloudVisualizer = false;      // Visualizes point cloud that is separated by bounding boxes
-    bool showKeypointMatching = false;              // visualize keypoint matching results frame by frame
-    bool turnOnFinalTTCVisualizer = true;
+    bool turnOnFinalTTCVisualizer = false;                  // Turn on TTC without keypoint matching
+    bool turnOnFinalTTCVisualizerWithKeypoints = true;      // Turn on TTC with keypoint matching
 
     // Initialization COUT
     cout << " --- INITIALIZATION DATA ---" << endl;
@@ -219,6 +220,26 @@ int main(int argc, const char *argv[])
             cout << "Unknown Detector Type. Please change to type specified in code." << endl;
         }
 
+        if (limitKptsPreceedingVehicle || turnOnFinalTTCVisualizer)
+        {
+            // only keep keypoints on the preceding vehicle
+            bool bFocusOnVehicle = true;
+            cv::Rect vehicleRect(535, 180, 180, 150); // bottom-left-x, bottom-left-y, width, height
+            if (bFocusOnVehicle)
+            {
+                vector<cv::KeyPoint> keypointFiltered;
+                for (auto &keypoint : keypoints)
+                {
+                    if (vehicleRect.contains(keypoint.pt))
+                    {
+                        keypointFiltered.push_back(keypoint);
+                    }
+                }
+
+                keypoints = keypointFiltered;
+            }
+        }
+
         // optional : limit number of keypoints (helpful for debugging and learning)
         if (bLimitKpts)
         {
@@ -280,23 +301,6 @@ int main(int argc, const char *argv[])
 
             cout << "#8 : TRACK 3D OBJECT BOUNDING BOXES done" << endl;
 
-            // Display keypoint matching on visualizer
-            if (showKeypointMatching)
-            {
-                cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
-                cv::drawMatches((dataBuffer.end() - 2)->cameraImg, (dataBuffer.end() - 2)->keypoints,
-                                (dataBuffer.end() - 1)->cameraImg, (dataBuffer.end() - 1)->keypoints,
-                                matches, matchImg,
-                                cv::Scalar::all(-1), cv::Scalar::all(-1),
-                                vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-
-                string windowName = "Matching keypoints between two camera images";
-                cv::namedWindow(windowName, 7);
-                cv::imshow(windowName, matchImg);
-                // cout << "**PRESS ANY KEYS TO CONTINUE TO NEXT IMAGE!**" << endl;
-                cv::waitKey(0); // wait for key to be pressed
-            }
-
 
             /* COMPUTE TTC ON OBJECT IN FRONT */
 
@@ -325,6 +329,7 @@ int main(int argc, const char *argv[])
                 // At this stage, we only have lidar points of car ahead of Ego Car.
                 if( currBB->lidarPoints.size()>0 && prevBB->lidarPoints.size()>0 ) 
                 {
+                    
                     //// STUDENT ASSIGNMENT
                     //// TASK FP.2 -> compute time-to-collision based on Lidar data (implement -> computeTTCLidar)
                     double ttcLidar; 
@@ -352,6 +357,33 @@ int main(int argc, const char *argv[])
                         char str[200];
                         sprintf(str, "TTC Lidar : %f s, TTC Camera : %f s", ttcLidar, ttcCamera);
                         putText(visImg, str, cv::Point2f(80, 50), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255));
+
+                        string windowName = "Final Results : TTC";
+                        cv::namedWindow(windowName, 4);
+                        cv::imshow(windowName, visImg);
+                        cout << "Press key to continue to next frame" << endl;
+                        cv::waitKey(0);
+                    }
+
+                    if (turnOnFinalTTCVisualizerWithKeypoints)
+                    {
+                        cv::Mat visImg = (dataBuffer.end() - 1)->cameraImg.clone();
+                        showLidarImgOverlay(visImg, currBB->lidarPoints, P_rect_00, R_rect_00, RT, &visImg);
+                        
+                        cv::drawMatches((dataBuffer.end() - 2)->cameraImg, (dataBuffer.end() - 2)->keypoints,
+                                        (dataBuffer.end() - 1)->cameraImg, (dataBuffer.end() - 1)->keypoints,
+                                        (dataBuffer.end() - 1)->kptMatches, visImg,
+                                        cv::Scalar::all(-1), cv::Scalar::all(-1),
+                                        vector<char>(), cv::DrawMatchesFlags::DEFAULT);
+
+                        double x_offset_second_box = 1245;
+                        double box_offset = 10;
+                        cv::rectangle(visImg, cv::Point(currBB->roi.x - box_offset, currBB->roi.y - box_offset), cv::Point(currBB->roi.x + currBB->roi.width + box_offset, currBB->roi.y + currBB->roi.height), cv::Scalar(0, 255, 0), 2);
+                        cv::rectangle(visImg, cv::Point(prevBB->roi.x + x_offset_second_box - box_offset, prevBB->roi.y - box_offset), cv::Point(prevBB->roi.x + x_offset_second_box + prevBB->roi.width + box_offset, prevBB->roi.y + prevBB->roi.height), cv::Scalar(0, 255, 0), 2);
+
+                        char str[200];
+                        sprintf(str, "TTC Lidar : %f s, TTC Camera : %f s", ttcLidar, ttcCamera);
+                        putText(visImg, str, cv::Point2f(800, 50), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255), 3);
 
                         string windowName = "Final Results : TTC";
                         cv::namedWindow(windowName, 4);
