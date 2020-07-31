@@ -12,7 +12,7 @@ The main principles taught in this segment are:
 3) Filtering techniques
 4) Reading and streaming PCDs
 
-<img src="media/obstacle_detect_point_cloud_streaming.gif" width="800" height="400" />
+<img src="media/obstacle_detect_point_cloud_streaming.gif" width="900" height="400" />
 
 ##Camera Segment - OpenCV<br/>
 The main principles taught in this segment are: 
@@ -33,7 +33,7 @@ The main principles taught in this segment are:
 4) Clustering and Tracking of Radar points
 5) Simulation on Matlab
 
-<img src="media/range_doppler_map_obstacle_radar.gif" width="1200" height="400" />
+<img src="media/range_doppler_map_obstacle_radar.gif" width="800" height="400" />
 
 ##Kalman Filter Segment<br/>
 The main principles taught in this segment are: 
