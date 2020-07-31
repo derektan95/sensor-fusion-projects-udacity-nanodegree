@@ -3,9 +3,9 @@
 ### Summary<br/>
 This is a course that summarizes the essential principles of LiDAR, Camera, Radar and Sensor Fusion. Since each sensor has their inherit strengths and limitations, it is important to investigate how they can complement each other to provide the most reliable results when attempting to detect obstacles.
 
-<img src="media/pros_vs_cons_sensors_v1.png" width="900" height="400" />
+<img src="media/pros_vs_cons_sensors_v1.png" width="900" height="200" />
 
-<img src="media/pros_vs_cons_sensors_v2.png" width="900" height="400" />
+<img src="media/pros_vs_cons_sensors_v2.png" width="900" height="200" />
 
 ## LiDAR Segment - Point Cloud Library<br/>
 Segmented the ground plane from point cloud data using Random Sample Consensus (RANSAC). Performed Obstacle Clustering using recursion, with improved efficiency using the Kd-tree data structure.
