@@ -120,19 +120,17 @@ sampling_freq = 1000;
 f = sampling_freq*(0:Nr/2) / Nr;
 P1  = signal_fft(1:Nr/2 +1);
 
-%plotting the range
-figure ('Name','Range from First FFT')
-subplot(2,1,1)
+% %plotting the range
+% figure ('Name','Range from First FFT')
+% subplot(2,1,1)
 
- % *%TODO* :
- % plot FFT output 
-plot(f,P1) 
-title('Single-Sided Amplitude Spectrum of X(t)')
-xlabel('f (Hz)')
-ylabel('|P1(f)|')
-
- 
-axis ([0 200 0 0.5]);
+%  % *%TODO* :
+%  % plot FFT output 
+% plot(f,P1) 
+% title('Single-Sided Amplitude Spectrum of X(t)')
+% xlabel('f (Hz)')
+% ylabel('|P1(f)|')
+% axis ([0 200 0 0.5]);
 
 
 
@@ -163,7 +161,13 @@ RDM = 10*log10(RDM);
 %dimensions
 doppler_axis = linspace(-100,100,Nd);
 range_axis = linspace(-200,200,Nr/2)*((Nr/2)/400);
-figure,surf(doppler_axis,range_axis,RDM);
+figure (2)
+subplot(1,2, 1)
+surf(doppler_axis,range_axis,RDM);
+title("Range Doppler Map");
+xlabel("Doppler Axis [m/s]");
+ylabel("Range Axis [m]");
+zlabel("Intensity (Un-normalized)");
 
 %% CFAR implementation
 
@@ -252,8 +256,15 @@ end
 % *%TODO* :
 %display the CFAR output using the Surf function like we did for Range
 %Doppler Response output.
-figure,surf(doppler_axis,range_axis, filtered_map);
-colorbar;
+
+% figure (3)
+subplot(1,2, 2)
+surf(doppler_axis,range_axis, filtered_map);
+title("Cell Averaging Constant Fast Alarm Rate Filtering (CFAR)");
+xlabel("Doppler Axis [m/s]");
+ylabel("Range Axis [m]");
+zlabel("Intensity (Normalized)");
+% colorbar;
 
 
  
