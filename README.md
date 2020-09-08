@@ -1,16 +1,19 @@
-# Sensor Fusion for Autonomous Vehicles Nanodegree - Udacity
+# Sensor Fusion Nanodegree (Udacity)
 
-**Disclaimer** Udacity provided some starter code, but the implementation for these concepts are done by myself. Please contact derektan95@hotmail.com for any questions. 
+**Disclaimer:** Udacity provided some starter code, but the implementation for these concepts are done by myself. Please contact derektan95@hotmail.com for any questions. 
+
+### Certificate of Completion<br/>
+https://graduation.udacity.com/nd313
 
 ### Summary<br/>
-This is a course that summarizes the essential principles of LiDAR, Camera, Radar and Sensor Fusion. Since each sensor has their inherit strengths and limitations, it is important to investigate how they can complement each other to provide the most reliable results when attempting to determine the position and velocity of obstacles.
+This is a course that summarizes the essential principles of **LiDAR, Camera, Radar and Sensor Fusion**. Since each sensor has their inherit strengths and limitations, it is important to investigate how they can complement each other to provide the most reliable results when attempting to determine the position and velocity of obstacles.
 
 <img src="media/pros_vs_cons_sensors_v1.png" width="900" height="200" />
 
 <img src="media/pros_vs_cons_sensors_v2.png" width="900" height="200" />
 
 ## LiDAR Segment - Point Cloud Library<br/>
-The Random Sample Consensus (RANSAC) principle was used to segment the ground plane from point cloud data. Obstacle Clustering was performed using recursion, with improved efficiency using the Kd-tree data structure.
+The **Random Sample Consensus (RANSAC)** principle was used to segment the ground plane from point cloud data. Obstacle Clustering was performed using recursion, with improved efficiency using the **Kd-tree data structure**.
 
 The main principles taught in this segment are: 
 1) Plane Segmentation
@@ -21,7 +24,7 @@ The main principles taught in this segment are:
 <img src="media/obstacle_detect_point_cloud_streaming.gif" width="900" height="400" />
 
 ## Camera Segment - OpenCV<br/>
-The YOLO v3 framework was utilized to assign bounding boxes to potential targets. Corresponding bounding boxes were matched between consecutive images using keypoint Detectors and Descriptors. Accuracy and speed analysis test were conducted for different combinations of keypoint Detectors and Descriptors. For the referenced image above, the Shi-Tomasi Detector was used along with the BRIEF Descriptor. The Time-To-Collision value was calculated either with Lidar or camera keypoint values.
+The **YOLO v3 Object Recognition framework** was utilized to assign bounding boxes to potential targets. Corresponding bounding boxes were matched between consecutive images using keypoint Detectors and Descriptors. Accuracy and speed analysis test were conducted for different combinations of keypoint Detectors and Descriptors. For the referenced image above, the **Shi-Tomasi Detector** was used along with the **BRIEF Descriptor**. The Time-To-Collision value was calculated either with Lidar or camera keypoint values. **Keypoint detectors / descriptors used: SHI-TOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT.** 
 
 The main principles taught in this segment are: 
 1) Camera Technology & Optics
@@ -34,7 +37,7 @@ The main principles taught in this segment are:
 <img src="media/time_to_collision_with_keypt_match_gif.gif" width="1000" height="400" />
 
 ## Radar Segment - Matlab<br/>
-Fast Fourier Transform was performed twice on readings given by the Frequency Modulated Continuous Wave (FMCW) Radar to obtain the Range-Doppler Map.  Furthermore, Cell Averaging Constant Fast Alarm Rate (CA - CFAR) was conducted to dynamically filter out noise and to retrieve the peak corresponding to the obstacle. From the image below, one can deduce that the obstacle has a displacement of 110m and a velocity of -20m/s.
+**Fast Fourier Transform** was performed twice on readings given by the **Frequency Modulated Continuous Wave (FMCW) Radar** to obtain the **Range-Doppler Map**.  Furthermore, **Cell Averaging Constant Fast Alarm Rate (CA - CFAR)** was conducted to dynamically filter out noise and to retrieve the peak corresponding to the obstacle. From the image below, one can deduce that the obstacle has a displacement of 110m and a velocity of -20m/s.
 
 The main principles taught in this segment are: 
 1) Radar Principles
@@ -46,7 +49,7 @@ The main principles taught in this segment are:
 <img src="media/range_doppler_map_obstacle_radar.jpg" width="900" height="400" />
 
 ## Kalman Filter Segment<br/>
-The Unscented Kalman Filter takes in noisy measurement data as input and provides a robust estimation of displacement and velocity values of obstacles. The Constant Turn Rate and Velocity Magnitude Model (CTRV) model is used to provide predictions of future state of obstacle, which is then weighted against sensor readings to provide reliable estimations that minimizes prediction or sensor error. In the image referenced below, the green path represents the predicted path by the Kalman Filter. The Root Mean Squared Error (RMSE) between estimation and ground truth values is successfully minimized.
+The **Unscented Kalman Filter** takes in noisy measurement data as input and provides a robust estimation of displacement and velocity values of obstacles. The **Constant Turn Rate and Velocity Magnitude Model (CTRV) model** is used to provide predictions of future state of obstacle, which is then weighted against sensor readings to provide reliable estimations that minimizes prediction or sensor error. In the image referenced below, the green path represents the predicted path by the Kalman Filter. The Root Mean Squared Error (RMSE) between estimation and ground truth values is successfully minimized.
 
 The main principles taught in this segment are: 
 1) Normal Kalman Filter (1D)
