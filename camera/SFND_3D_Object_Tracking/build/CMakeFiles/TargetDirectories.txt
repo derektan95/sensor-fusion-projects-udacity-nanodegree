@@ -1,3 +1,0 @@
-/home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_3D_Object_Tracking/build/CMakeFiles/rebuild_cache.dir
-/home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_3D_Object_Tracking/build/CMakeFiles/3D_object_tracking.dir
-/home/derektan/Desktop/sensor_fusion_udacity/tutorials/camera/SFND_3D_Object_Tracking/build/CMakeFiles/edit_cache.dir
