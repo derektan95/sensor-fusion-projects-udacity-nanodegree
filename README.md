@@ -6,7 +6,9 @@
 https://graduation.udacity.com/nd313
 
 ### Summary<br/>
-This is a course that summarizes the essential principles of **LiDAR, Camera, Radar and Sensor Fusion**. Since each sensor has their inherit strengths and limitations, it is important to investigate how they can complement each other to provide the most reliable results when attempting to determine the position and velocity of obstacles.
+This is a course that summarizes the essential principles of **LiDAR, Camera, Radar and Sensor Fusion**. Since each sensor has their inherent strengths and limitations, it is important to investigate how they can complement each other to provide the most reliable results when attempting to determine the position and velocity of obstacles.
+
+**Note:** These projects are developed in **Ubuntu 18.04** and **ROS Melodic**. Please clone the `master` branch for latest version of all projects. The `with_cmake_files` branch contains cmake files from my computer, which will be irrelevant for you. All projects are compiled using cmake (https://cmake.org/).
 
 <img src="media/pros_vs_cons_sensors_v1.png" width="900" height="200" />
 
