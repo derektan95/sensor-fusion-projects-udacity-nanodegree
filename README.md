@@ -3,7 +3,7 @@
 **Disclaimer:** Udacity provided some starter code, but the implementation for these concepts are done by myself. Please contact derektan95@hotmail.com for any questions. 
 
 ### Certificate of Completion<br/>
-https://graduation.udacity.com/nd313
+https://confirm.udacity.com/FRCMPSTH
 
 ### Summary<br/>
 This is a course that summarizes the essential principles of **LiDAR, Camera, Radar and Sensor Fusion**. Since each sensor has their inherent strengths and limitations, it is important to investigate how they can complement each other to provide the most reliable results when attempting to determine the position and velocity of obstacles.
